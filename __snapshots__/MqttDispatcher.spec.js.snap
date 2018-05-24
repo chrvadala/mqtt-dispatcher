@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should route messages 1`] = `
+Object {
+  "performedSubscription": true,
+}
+`;
+
+exports[`should route messages 2`] = `
+Object {
+  "performedSubscription": true,
+}
+`;
+
+exports[`should route messages 3`] = `
+Object {
+  "performedSubscription": false,
+}
+`;
+
+exports[`should route messages 4`] = `
+Object {
+  "performedSubscription": false,
+}
+`;
+
+exports[`should route messages 5`] = `
+Object {
+  "performedUnsubscription": false,
+}
+`;
+
+exports[`should route messages 6`] = `
+Object {
+  "performedUnsubscription": true,
+}
+`;
+
+exports[`should route messages 7`] = `
+Object {
+  "performedUnsubscription": true,
+}
+`;
+
+exports[`should route messages 8`] = `
+Object {
+  "performedUnsubscription": true,
+}
+`;

@@ -1,0 +1,19 @@
+{
+  "name": "mqtt-dispatcher",
+  "version": "1.0.0",
+  "main": "./MqttDispatcher.js",
+  "repository": "https://github.com/chrvadala/mqtt-dispatcher.git",
+  "author": "chrvadala",
+  "license": "MIT",
+  "scripts": {
+    "coverage": "jest --collectCoverage",
+    "test": "jest"
+  },
+  "dependencies": {
+    "qlobber": "^3.0.2"
+  },
+  "devDependencies": {
+    "jest": "^23.0.0",
+    "mqtt": "^2.18.0"
+  }
+}
