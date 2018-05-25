@@ -7,11 +7,11 @@ const mqttMatcher = {
 }
 
 class MqttDispatcher {
-  constructor(mqtt, qos = 0) {
-    this.mqtt = mqtt;
-    this.qos = qos;
-    this.matcher = new Qlobber(mqttMatcher);
-    this.destroyed = false;
+  constructor (mqtt, qos = 0) {
+    this.mqtt = mqtt
+    this.qos = qos
+    this.matcher = new Qlobber(mqttMatcher)
+    this.destroyed = false
     this.subscribedTopics = {}
     this._handleIncomingMessage = this._handleIncomingMessage.bind(this)
     mqtt.on('message', this._handleIncomingMessage)
@@ -23,15 +23,15 @@ class MqttDispatcher {
    * @param fn
    * @returns {{performedSubscription: boolean}}
    */
-  subscribe(topicPattern, fn) {
-    const {matcher, mqtt, qos, subscribedTopics} = this;
+  subscribe (topicPattern, fn) {
+    const {matcher, mqtt, qos, subscribedTopics} = this
     this._ensureLive()
     let performedSubscription = false
 
     if (!this._involvedTopic(topicPattern)) {
       mqtt.subscribe(topicPattern, {qos})
-      subscribedTopics[topicPattern] = 0 //initialize
-      performedSubscription = true;
+      subscribedTopics[topicPattern] = 0 // initialize
+      performedSubscription = true
     }
 
     matcher.add(topicPattern, fn)
@@ -45,10 +45,10 @@ class MqttDispatcher {
    * @param fn
    * @returns {{performedUnsubscription: boolean}}
    */
-  unsubscribe(topicPattern, fn = undefined) {
-    const {matcher, mqtt, subscribedTopics} = this;
+  unsubscribe (topicPattern, fn = undefined) {
+    const {matcher, mqtt, subscribedTopics} = this
     this._ensureLive()
-    let performedUnsubscription = false;
+    let performedUnsubscription = false
 
     matcher.remove(topicPattern, fn)
     subscribedTopics[topicPattern] = fn ? subscribedTopics[topicPattern] - 1 : 0
@@ -64,30 +64,30 @@ class MqttDispatcher {
   /**
    * Detach dispatcher from client
    */
-  destroy() {
-    const {matcher, mqtt, subscribedTopics} = this;
+  destroy () {
+    const {matcher, mqtt, subscribedTopics} = this
     this._ensureLive()
     Object.keys(subscribedTopics).forEach(topic => {
       mqtt.unsubscribe(topic)
     })
-    matcher.clear();
+    matcher.clear()
     this.subscribedTopics = {}
     mqtt.removeListener('message', this._handleIncomingMessage)
-    this.destroyed = true;
+    this.destroyed = true
   }
 
-  _handleIncomingMessage(topic, message, packet) {
-    const {matcher} = this;
+  _handleIncomingMessage (topic, message, packet) {
+    const {matcher} = this
     const fns = matcher.match(topic)
     fns.forEach(fn => fn(topic, message, packet))
   }
 
-  _involvedTopic(topicPattern) {
-    const {subscribedTopics} = this;
+  _involvedTopic (topicPattern) {
+    const {subscribedTopics} = this
     return Boolean(subscribedTopics[topicPattern])
   }
 
-  _ensureLive() {
+  _ensureLive () {
     if (this.destroyed) throw new Error('MqttDispatcher was destroyed')
   }
 }
