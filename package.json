@@ -1,6 +1,6 @@
 {
   "name": "mqtt-dispatcher",
-  "description": "Node.js message dispatcher for mqtt",
+  "description": "Node.js message dispatcher for MQTT",
   "version": "1.0.0",
   "main": "./MqttDispatcher.js",
   "repository": "https://github.com/chrvadala/mqtt-dispatcher.git",
