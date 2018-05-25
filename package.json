@@ -7,7 +7,9 @@
   "license": "MIT",
   "scripts": {
     "coverage": "jest --collectCoverage",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "standard:fix": "standard --fix"
   },
   "dependencies": {
     "qlobber": "^3.0.2"
