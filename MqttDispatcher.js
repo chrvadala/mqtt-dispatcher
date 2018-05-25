@@ -11,29 +11,69 @@ class MqttDispatcher {
     this.mqtt = mqtt;
     this.qos = qos;
     this.matcher = new Qlobber(mqttMatcher);
-    mqtt.on('message', this._handleIncomingMessage.bind(this))
+    this.destroyed = false;
+    this.subscribedTopics = {}
+    this._handleIncomingMessage = this._handleIncomingMessage.bind(this)
+    mqtt.on('message', this._handleIncomingMessage)
   }
 
-  subscribe(topic, fn) {
-    const {matcher, mqtt, qos} = this;
+  /**
+   * Subscribe to a topic with a function
+   * @param topicPattern
+   * @param fn
+   * @returns {{performedSubscription: boolean}}
+   */
+  subscribe(topicPattern, fn) {
+    const {matcher, mqtt, qos, subscribedTopics} = this;
+    this._ensureLive()
     let performedSubscription = false
-    if (!this._involvedTopic(topic)) {
-      mqtt.subscribe(topic, {qos})
+
+    if (!this._involvedTopic(topicPattern)) {
+      mqtt.subscribe(topicPattern, {qos})
+      subscribedTopics[topicPattern] = 0 //initialize
       performedSubscription = true;
     }
-    matcher.add(topic, fn)
+
+    matcher.add(topicPattern, fn)
+    subscribedTopics[topicPattern]++
     return {performedSubscription}
   }
 
-  unsubscribe(topic, fn = undefined) {
-    const {matcher, mqtt} = this;
+  /**
+   * Unsubscribe to a topic (if a function is provided removes just that reference)
+   * @param topicPattern
+   * @param fn
+   * @returns {{performedUnsubscription: boolean}}
+   */
+  unsubscribe(topicPattern, fn = undefined) {
+    const {matcher, mqtt, subscribedTopics} = this;
+    this._ensureLive()
     let performedUnsubscription = false;
-    matcher.remove(topic, fn)
-    if (!this._involvedTopic(topic)) {
-      mqtt.unsubscribe(topic)
+
+    matcher.remove(topicPattern, fn)
+    subscribedTopics[topicPattern] = fn ? subscribedTopics[topicPattern] - 1 : 0
+
+    if (!this._involvedTopic(topicPattern)) {
+      mqtt.unsubscribe(topicPattern)
+      delete subscribedTopics[topicPattern]
       performedUnsubscription = true
     }
     return {performedUnsubscription}
+  }
+
+  /**
+   * Detach dispatcher from client
+   */
+  destroy() {
+    const {matcher, mqtt, subscribedTopics} = this;
+    this._ensureLive()
+    Object.keys(subscribedTopics).forEach(topic => {
+      mqtt.unsubscribe(topic)
+    })
+    matcher.clear();
+    this.subscribedTopics = {}
+    mqtt.removeListener('message', this._handleIncomingMessage)
+    this.destroyed = true;
   }
 
   _handleIncomingMessage(topic, message, packet) {
@@ -42,10 +82,13 @@ class MqttDispatcher {
     fns.forEach(fn => fn(topic, message, packet))
   }
 
-  _involvedTopic(topic) {
-    const {matcher} = this;
-    const fns = matcher.match(topic)
-    return fns.length > 0
+  _involvedTopic(topicPattern) {
+    const {subscribedTopics} = this;
+    return Boolean(subscribedTopics[topicPattern])
+  }
+
+  _ensureLive() {
+    if (this.destroyed) throw new Error('MqttDispatcher was destroyed')
   }
 }
 

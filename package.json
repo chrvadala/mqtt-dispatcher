@@ -13,6 +13,7 @@
     "qlobber": "^3.0.2"
   },
   "devDependencies": {
+    "@types/jest": "^22.2.3",
     "jest": "^23.0.0",
     "mqtt": "^2.18.0"
   }
