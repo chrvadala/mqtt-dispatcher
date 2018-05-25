@@ -68,7 +68,7 @@ setTimeout(() => {
 - **0.0** - Preview version
 
 ## Contributors
-[chrvadala](https://github.com/chrvadala)
+- [chrvadala](https://github.com/chrvadala (author)
 
 ## Related projects
-[mqtt-router](https://www.npmjs.com/package/mqtt-router)
+- [mqtt-router](https://www.npmjs.com/package/mqtt-router)
