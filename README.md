@@ -4,21 +4,23 @@
 [![NPM Version](https://img.shields.io/npm/v/mqtt-dispatcher.svg)](https://www.npmjs.com/package/mqtt-dispatcher)
 [![Dependency Status](https://david-dm.org/chrvadala/mqtt-dispatcher.png)](https://david-dm.org/chrvadala/mqtt-dispatcher)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![Beerpay](https://beerpay.io/chrvadala/transformation-matrix/badge.svg?style=beer)](https://beerpay.io/chrvadala/mqtt-dispatcher)
+
 
 ## Why this library?
 The implementation for MQTT in Javascript is [MQTT.js](https://github.com/mqttjs/MQTT.js). It is able to handle MQTT messages but doesn't have
-a built-in message dispatcher. You can subscribe different topics, but messages received on different topics are handled by a single event listener `on('message', cb)`.
-This library provides a dispatch system that connects a *subscribe* operation with a specific callback (`subscribe (topicPattern, fn )`) that is
-called only when an incoming message matches the provided pattern.
+a built-in message dispatcher. You can subscribe different topics, but all messages are handled by a single event listener `on('message', cb)`.
+
+This library provides a dispatch system that connects a *subscribe* operation with a specific callback (`subscribe (topicPattern, fn )`). A callback is called only when an incoming message matches the provided pattern.
+
 Under the hood it uses the library [qlobber](https://github.com/davedoesdev/qlobber) to handle the mach task.
 
-## Api
-```javascript
-- `MqttDispatcher(mqtt, qos = 0)` - Connect dispatcher with listener
-- `subscribe (topicPattern, fn )` - Add listener
-- `unsubscribe (topicPattern, [fn])` - Remove listener
-- `destroy()` - Detach dispatcher from client
-```
+## Api
+- `new MqttDispatcher(mqtt, qos=0)` - Connects dispatcher with listener
+- `subscribe(topicPattern, fn )` - Adds listener
+- `unsubscribe(topicPattern, [fn])` - Removes listener
+- `destroy()` - Detaches dispatcher from client
+
 
 ## Install
 ````
@@ -49,7 +51,7 @@ let func2 = (topic, message) => {
 router.subscribe('hello/mqtt', func1)
 router.subscribe('hello/+', func2)
 
-//removes handlers
+//remove handlers
 setTimeout(() => {
     console.log('timeout 1')
     router.unsubscribe('hello/mqtt', func1)
@@ -62,8 +64,11 @@ setTimeout(() => {
 
 ```
 
+## Changelog
+- **0.0** - Preview version
+
 ## Contributors
-[chrvadala](https://github.com/chrvadala)
+- [chrvadala](https://github.com/chrvadala) (author)
 
 ## Related projects
-[mqtt-router](https://www.npmjs.com/package/mqtt-router)
+- [mqtt-router](https://www.npmjs.com/package/mqtt-router)
