@@ -1,5 +1,6 @@
 {
   "name": "mqtt-dispatcher",
+  "description": "Node.js message dispatcher for mqtt",
   "version": "1.0.0",
   "main": "./MqttDispatcher.js",
   "repository": "https://github.com/chrvadala/mqtt-dispatcher.git",
@@ -11,6 +12,12 @@
     "test:watch": "jest --watch",
     "standard:fix": "standard --fix"
   },
+  "engines": {
+    "node": ">= 6"
+  },
+  "keywords": [
+    "mqtt"
+  ],
   "dependencies": {
     "qlobber": "^3.0.2"
   },
