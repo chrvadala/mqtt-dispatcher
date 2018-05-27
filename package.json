@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "coverage": "jest --collectCoverage",
-    "test": "jest",
+    "test": "jest --coverage --coverageReporters=text-lcov | coveralls",
     "test:watch": "jest --watch",
     "standard:fix": "standard --fix"
   },
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@types/jest": "^22.2.3",
+    "coveralls": "^3.0.1",
     "jest": "^23.0.0",
     "mqtt": "^2.18.0",
     "standard": "^11.0.1"
