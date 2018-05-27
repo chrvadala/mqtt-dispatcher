@@ -1,4 +1,6 @@
 # mqtt-dispatcher 
+Node.js message dispatcher for MQTT
+
 [![Build Status](https://travis-ci.org/chrvadala/mqtt-dispatcher.svg?branch=master)](https://travis-ci.org/chrvadala/mqtt-dispatcher)
 [![Coverage Status](https://coveralls.io/repos/github/chrvadala/mqtt-dispatcher/badge.svg?branch=master)](https://coveralls.io/github/chrvadala/mqtt-dispatcher?branch=master)
 [![NPM Version](https://img.shields.io/npm/v/mqtt-dispatcher.svg)](https://www.npmjs.com/package/mqtt-dispatcher)
@@ -8,10 +10,10 @@
 
 
 ## Why this library?
-The implementation for MQTT in Javascript is [MQTT.js](https://github.com/mqttjs/MQTT.js). It is able to handle MQTT messages but doesn't have
+The implementation for **MQTT** in Javascript is [MQTT.js](https://github.com/mqttjs/MQTT.js). It is able to handle MQTT messages but doesn't have
 a built-in message dispatcher. You can subscribe different topics, but all messages are handled by a single event listener `on('message', cb)`.
 
-This library provides a dispatch system that connects a *subscribe* operation with a specific callback (`subscribe (topicPattern, fn )`). A callback is called only when an incoming message matches the provided pattern.
+This library provides a dispatch system that connects a **subscribe** operation with a specific callback. A callback is called only when an incoming message matches the provided pattern.
 
 Under the hood it uses the library [qlobber](https://github.com/davedoesdev/qlobber) to handle the mach task.
 
