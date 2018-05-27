@@ -10,7 +10,8 @@
     "coverage": "jest --collectCoverage",
     "test": "jest --coverage --coverageReporters=text-lcov | coveralls",
     "test:watch": "jest --watch",
-    "standard:fix": "standard --fix"
+    "standard:fix": "standard --fix",
+    "version": "yarn test"
   },
   "engines": {
     "node": ">= 6"
