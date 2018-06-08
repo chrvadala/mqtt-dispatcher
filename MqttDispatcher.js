@@ -28,14 +28,18 @@ class MqttDispatcher {
     this._ensureLive()
     let performedSubscription = false
 
-    if (!Number.isFinite(subscribedTopics[topicPattern])) {
+    if (!subscribedTopics[topicPattern]) {
       mqtt.subscribe(topicPattern, {qos})
-      subscribedTopics[topicPattern] = 0 // initialize
+      subscribedTopics[topicPattern] = new Set() // initialize
       performedSubscription = true
     }
 
+    if (subscribedTopics[topicPattern].has(fn)) {
+      throw new Error('Function already registered on same topic pattern')
+    }
+
     matcher.add(topicPattern, fn)
-    subscribedTopics[topicPattern]++
+    subscribedTopics[topicPattern].add(fn)
     return {performedSubscription, topicPattern}
   }
 
@@ -50,12 +54,18 @@ class MqttDispatcher {
     this._ensureLive()
     let performedUnsubscription = false
 
-    matcher.remove(topicPattern, fn)
-    subscribedTopics[topicPattern] = fn ? subscribedTopics[topicPattern] - 1 : 0
+    if (fn) {
+      if (!subscribedTopics[topicPattern].has(fn)) throw new Error('Extraneous function provided')
+      matcher.remove(topicPattern, fn)
+      subscribedTopics[topicPattern].delete(fn)
+    } else {
+      matcher.remove(topicPattern)
+      subscribedTopics[topicPattern].clear()
+    }
 
-    if (subscribedTopics[topicPattern] === 0) {
+    if (subscribedTopics[topicPattern].size === 0) {
       mqtt.unsubscribe(topicPattern)
-      subscribedTopics[topicPattern] = undefined
+      delete subscribedTopics[topicPattern]
       performedUnsubscription = true
     }
     return {performedUnsubscription, topicPattern}
