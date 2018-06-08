@@ -149,7 +149,7 @@ it('should route messages', function () {
   expect(fn3).toHaveBeenCalledTimes(calls3)
   expect(fn4).toHaveBeenCalledTimes(calls4)
   expect(dispatcher.subscribedTopics).toEqual({
-    '+/mqtt': new Set([fn1]),
+    '+/mqtt': new Set([fn1])
   })
 
   // match [fn1]
@@ -225,7 +225,7 @@ it('should unsubscribe from the client if fn is not provided', function () {
   expect(client.subscribe).toHaveBeenCalledTimes(1)
   expect(client.unsubscribe).toHaveBeenCalledTimes(0)
   expect(dispatcher.subscribedTopics).toEqual({
-    '#': expect.any(Set),
+    '#': expect.any(Set)
   })
 
   expect(dispatcher.unsubscribe('#')).toEqual({performedUnsubscription: true, topicPattern: '#'})
