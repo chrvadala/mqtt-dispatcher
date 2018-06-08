@@ -28,7 +28,7 @@ class MqttDispatcher {
     this._ensureLive()
     let performedSubscription = false
 
-    if (!this._involvedTopic(topicPattern)) {
+    if (!Number.isFinite(subscribedTopics[topicPattern])) {
       mqtt.subscribe(topicPattern, {qos})
       subscribedTopics[topicPattern] = 0 // initialize
       performedSubscription = true
@@ -53,9 +53,9 @@ class MqttDispatcher {
     matcher.remove(topicPattern, fn)
     subscribedTopics[topicPattern] = fn ? subscribedTopics[topicPattern] - 1 : 0
 
-    if (!this._involvedTopic(topicPattern)) {
+    if (subscribedTopics[topicPattern] === 0) {
       mqtt.unsubscribe(topicPattern)
-      delete subscribedTopics[topicPattern]
+      subscribedTopics[topicPattern] = undefined
       performedUnsubscription = true
     }
     return {performedUnsubscription, topicPattern}
@@ -80,11 +80,6 @@ class MqttDispatcher {
     const {matcher} = this
     const fns = matcher.match(topic)
     fns.forEach(fn => fn(topic, message, packet))
-  }
-
-  _involvedTopic (topicPattern) {
-    const {subscribedTopics} = this
-    return Boolean(subscribedTopics[topicPattern])
   }
 
   _ensureLive () {
