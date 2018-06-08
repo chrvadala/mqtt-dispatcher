@@ -36,7 +36,7 @@ class MqttDispatcher {
 
     matcher.add(topicPattern, fn)
     subscribedTopics[topicPattern]++
-    return {performedSubscription}
+    return {performedSubscription, topicPattern}
   }
 
   /**
@@ -58,7 +58,7 @@ class MqttDispatcher {
       delete subscribedTopics[topicPattern]
       performedUnsubscription = true
     }
-    return {performedUnsubscription}
+    return {performedUnsubscription, topicPattern}
   }
 
   /**
