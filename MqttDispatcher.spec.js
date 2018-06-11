@@ -287,3 +287,22 @@ it('should reject double registration on same topic', function () {
   }).toThrow(/already registered/i)
   expect(client.unsubscribe).toHaveBeenCalledTimes(0)
 })
+
+it('should reject unsub on unknown topics', function () {
+  const client = {
+    subscribe: jest.fn(),
+    unsubscribe: jest.fn(),
+    on: jest.fn(),
+    removeListener: jest.fn()
+  }
+
+  const dispatcher = new MqttDispatcher(client, 0)
+
+  expect(function () {
+    dispatcher.unsubscribe('/test')
+  }).toThrow(/extraneous topic/i)
+
+  expect(function () {
+    dispatcher.unsubscribe('/test', jest.fn())
+  }).toThrow(/extraneous topic/i)
+})

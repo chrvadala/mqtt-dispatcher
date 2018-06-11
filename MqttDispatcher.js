@@ -54,6 +54,8 @@ class MqttDispatcher {
     this._ensureLive()
     let performedUnsubscription = false
 
+    if (!subscribedTopics.hasOwnProperty(topicPattern)) throw new Error('Extraneous topic provided')
+
     if (fn) {
       if (!subscribedTopics[topicPattern].has(fn)) throw new Error('Extraneous function provided')
       matcher.remove(topicPattern, fn)
