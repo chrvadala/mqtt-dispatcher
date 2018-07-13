@@ -3,6 +3,21 @@ const MqttDispatcher = require('./MqttDispatcher')
 
 const noop = jest.fn()
 
+const getMqttFakeClient = () => ({
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  on: jest.fn(),
+  removeListener: jest.fn(),
+
+  _simulatePublish (topic, message) {
+    expect(this.on).toHaveBeenCalledTimes(1)
+    const handler = this.on.mock.calls[0][1]
+    const payload = Buffer.from(message, 'utf8')
+    const packet = {cmd: 'publish', retain: false, qos: 0, dup: false, length: 10, topic, payload}
+    return handler(topic, message, packet)
+  }
+})
+
 it('should attach listener and handle sub/unsub operations', function () {
   const client = {
     subscribe: jest.fn(),
@@ -316,8 +331,45 @@ it('should customize qos with options', function () {
   }
 
   const dispatcher = new MqttDispatcher(client, {qos: 2})
-  expect(dispatcher.options).toEqual({qos: 2})
+  expect(dispatcher.options).toMatchObject({qos: 2})
   const fn = jest.fn()
   dispatcher.subscribe('#', fn)
   expect(client.subscribe).toHaveBeenCalledWith('#', {qos: 2})
+})
+
+it('should avoid to handle subscriptions using an option', function () {
+  const client = getMqttFakeClient()
+
+  const dispatcher = new MqttDispatcher(client, {handleSubscriptions: false})
+  expect(dispatcher.options).toMatchObject({handleSubscriptions: false})
+
+  const fn1 = jest.fn()
+  const fn2 = jest.fn()
+  let calls1 = 0
+  let calls2 = 0
+
+  expect(dispatcher.subscribe('root/topic1', fn1)).toEqual({performedSubscription: false, topicPattern: 'root/topic1'})
+  expect(dispatcher.subscribe('root/topic2', fn2)).toEqual({performedSubscription: false, topicPattern: 'root/topic2'})
+
+  expect(client.subscribe).toHaveBeenCalledTimes(0)
+
+  client._simulatePublish('root/topic1', 'blablabla')
+  expect(fn1).toHaveBeenCalledTimes(++calls1)
+  expect(fn1).toHaveBeenCalledWith('root/topic1', 'blablabla', expect.any(Object))
+  expect(fn2).toHaveBeenCalledTimes(calls2)
+
+  client._simulatePublish('root/topic2', 'abcdef')
+  expect(fn1).toHaveBeenCalledTimes(calls1)
+  expect(fn2).toHaveBeenCalledTimes(++calls2)
+  expect(fn2).toHaveBeenCalledWith('root/topic2', 'abcdef', expect.any(Object))
+
+  client._simulatePublish('root/topic999', 'zxcvbn')
+  expect(fn1).toHaveBeenCalledTimes(calls2)
+  expect(fn2).toHaveBeenCalledTimes(calls1)
+
+  expect(dispatcher.unsubscribe('root/topic1')).toEqual({performedUnsubscription: false, topicPattern: 'root/topic1'})
+  expect(dispatcher.unsubscribe('root/topic2')).toEqual({performedUnsubscription: false, topicPattern: 'root/topic2'})
+
+  expect(client.subscribe).toHaveBeenCalledTimes(0)
+  expect(client.unsubscribe).toHaveBeenCalledTimes(0)
 })

@@ -8,6 +8,7 @@ const mqttMatcher = {
 
 const defaultOptions = {
   qos: 0,
+  handleSubscriptions: true,
 }
 
 class MqttDispatcher {
@@ -28,14 +29,16 @@ class MqttDispatcher {
    * @returns {{performedSubscription: boolean}}
    */
   subscribe (topicPattern, fn) {
-    const {matcher, mqtt, options: {qos}, subscribedTopics} = this
+    const {matcher, mqtt, options: {qos, handleSubscriptions}, subscribedTopics} = this
     this._ensureLive()
     let performedSubscription = false
 
     if (!subscribedTopics[topicPattern]) {
-      mqtt.subscribe(topicPattern, {qos})
+      if (handleSubscriptions) {
+        mqtt.subscribe(topicPattern, {qos})
+        performedSubscription = true
+      }
       subscribedTopics[topicPattern] = new Set() // initialize
-      performedSubscription = true
     }
 
     if (subscribedTopics[topicPattern].has(fn)) {
@@ -54,7 +57,7 @@ class MqttDispatcher {
    * @returns {{performedUnsubscription: boolean}}
    */
   unsubscribe (topicPattern, fn = undefined) {
-    const {matcher, mqtt, subscribedTopics} = this
+    const {matcher, mqtt, options: {handleSubscriptions}, subscribedTopics} = this
     this._ensureLive()
     let performedUnsubscription = false
 
@@ -70,9 +73,11 @@ class MqttDispatcher {
     }
 
     if (subscribedTopics[topicPattern].size === 0) {
-      mqtt.unsubscribe(topicPattern)
+      if (handleSubscriptions) {
+        mqtt.unsubscribe(topicPattern)
+        performedUnsubscription = true
+      }
       delete subscribedTopics[topicPattern]
-      performedUnsubscription = true
     }
     return {performedUnsubscription, topicPattern}
   }
@@ -81,11 +86,11 @@ class MqttDispatcher {
    * Detach dispatcher from client
    */
   destroy () {
-    const {matcher, mqtt, subscribedTopics} = this
+    const {matcher, mqtt, options: {handleSubscriptions}, subscribedTopics} = this
     this._ensureLive()
-    Object.keys(subscribedTopics).forEach(topic => {
-      mqtt.unsubscribe(topic)
-    })
+    if (handleSubscriptions) {
+      Object.keys(subscribedTopics).forEach(topic => mqtt.unsubscribe(topic))
+    }
     matcher.clear()
     this.subscribedTopics = {}
     mqtt.removeListener('message', this._handleIncomingMessage)

@@ -28,6 +28,7 @@ Under the hood it uses the library [qlobber](https://github.com/davedoesdev/qlob
 | Option | Default | Description |
 |---|---|---|
 | `qos` | `0` | Customize subscription qos |
+| `handleSubscriptions` | true |  If `false` the dispatcher won't subscribe the provided MQTT client to topics. This mode is useful to reduce the number of subscriptions, but supposes that the developer properly performs the required operations to obtain the required messages. _Use with caution_. |
 
 ## Install
 ````
