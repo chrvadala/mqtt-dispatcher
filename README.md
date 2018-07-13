@@ -24,6 +24,7 @@ Under the hood it uses the library [qlobber](https://github.com/davedoesdev/qlob
 - `destroy()` - Detaches dispatcher from client
 
 ## Options
+
 ----------------
 | Option | Default | Description |
 |---|---|---|
