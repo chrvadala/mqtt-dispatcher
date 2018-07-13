@@ -6,10 +6,14 @@ const mqttMatcher = {
   wildcard_some: '#'
 }
 
+const defaultOptions = {
+  qos: 0,
+}
+
 class MqttDispatcher {
-  constructor (mqtt, qos = 0) {
+  constructor (mqtt, options = {}) {
     this.mqtt = mqtt
-    this.qos = qos
+    this.options = {...defaultOptions, ...options}
     this.matcher = new Qlobber(mqttMatcher)
     this.destroyed = false
     this.subscribedTopics = {}
@@ -24,7 +28,7 @@ class MqttDispatcher {
    * @returns {{performedSubscription: boolean}}
    */
   subscribe (topicPattern, fn) {
-    const {matcher, mqtt, qos, subscribedTopics} = this
+    const {matcher, mqtt, options: {qos}, subscribedTopics} = this
     this._ensureLive()
     let performedSubscription = false
 

@@ -10,7 +10,7 @@ it('should attach listener and handle sub/unsub operations', function () {
     on: jest.fn()
   }
 
-  const dispatcher = new MqttDispatcher(client, 0)
+  const dispatcher = new MqttDispatcher(client)
   expect(client.on).toHaveBeenCalledWith('message', expect.any(Function))
   expect(client.on).toHaveBeenCalledTimes(1)
 
@@ -59,7 +59,7 @@ it('should route messages', function () {
     on: jest.fn()
   }
 
-  const dispatcher = new MqttDispatcher(client, 0)
+  const dispatcher = new MqttDispatcher(client)
   expect(client.on).toHaveBeenCalledTimes(1)
 
   let simulatePublish = (topic, message) => {
@@ -178,7 +178,7 @@ it('should destroy', function () {
     removeListener: jest.fn()
   }
 
-  const dispatcher = new MqttDispatcher(client, 0)
+  const dispatcher = new MqttDispatcher(client)
   expect(dispatcher.subscribe('+/mqtt', noop)).toEqual({performedSubscription: true, topicPattern: '+/mqtt'})
   expect(dispatcher.subscribe('#', noop)).toEqual({performedSubscription: true, topicPattern: '#'})
   expect(dispatcher.subscribe('abcdef/#', noop)).toEqual({performedSubscription: true, topicPattern: 'abcdef/#'})
@@ -219,7 +219,7 @@ it('should unsubscribe from the client if fn is not provided', function () {
     removeListener: jest.fn()
   }
 
-  const dispatcher = new MqttDispatcher(client, 0)
+  const dispatcher = new MqttDispatcher(client)
   expect(dispatcher.subscribe('#', jest.fn())).toEqual({performedSubscription: true, topicPattern: '#'})
   expect(dispatcher.subscribe('#', jest.fn())).toEqual({performedSubscription: false, topicPattern: '#'})
   expect(client.subscribe).toHaveBeenCalledTimes(1)
@@ -245,7 +245,7 @@ it('should maintain subscription when trying to unsubscribe a fn that wasnt subs
   const fn2 = jest.fn()
   const fnExtraneous = jest.fn()
 
-  const dispatcher = new MqttDispatcher(client, 0)
+  const dispatcher = new MqttDispatcher(client)
   expect(dispatcher.subscribe('#', fn1)).toEqual({performedSubscription: true, topicPattern: '#'})
   expect(dispatcher.subscribe('#', fn2)).toEqual({performedSubscription: false, topicPattern: '#'})
   expect(client.subscribe).toHaveBeenCalledTimes(1)
@@ -273,7 +273,7 @@ it('should reject double registration on same topic', function () {
 
   const fn1 = jest.fn()
 
-  const dispatcher = new MqttDispatcher(client, 0)
+  const dispatcher = new MqttDispatcher(client)
   expect(dispatcher.subscribe('#', fn1)).toEqual({performedSubscription: true, topicPattern: '#'})
   expect(dispatcher.subscribe('#/foo', fn1)).toEqual({performedSubscription: true, topicPattern: '#/foo'})
 
@@ -296,7 +296,7 @@ it('should reject unsub on unknown topics', function () {
     removeListener: jest.fn()
   }
 
-  const dispatcher = new MqttDispatcher(client, 0)
+  const dispatcher = new MqttDispatcher(client)
 
   expect(function () {
     dispatcher.unsubscribe('/test')
@@ -305,4 +305,19 @@ it('should reject unsub on unknown topics', function () {
   expect(function () {
     dispatcher.unsubscribe('/test', jest.fn())
   }).toThrow(/extraneous topic/i)
+})
+
+it('should customize qos with options', function () {
+  const client = {
+    subscribe: jest.fn(),
+    unsubscribe: jest.fn(),
+    on: jest.fn(),
+    removeListener: jest.fn()
+  }
+
+  const dispatcher = new MqttDispatcher(client, {qos: 2})
+  expect(dispatcher.options).toEqual({qos: 2})
+  const fn = jest.fn()
+  dispatcher.subscribe('#', fn)
+  expect(client.subscribe).toHaveBeenCalledWith('#', {qos: 2})
 })

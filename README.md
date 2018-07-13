@@ -18,11 +18,16 @@ This library provides a dispatch system that connects a **subscribe** operation 
 Under the hood it uses the library [qlobber](https://github.com/davedoesdev/qlobber) to handle the mach task.
 
 ## Api
-- `new MqttDispatcher(mqtt, qos=0)` - Connects dispatcher with listener
+- `new MqttDispatcher(mqtt, options)` - Connects dispatcher with listener
 - `subscribe(topicPattern, fn )` - Adds listener
 - `unsubscribe(topicPattern, [fn])` - Removes listener
 - `destroy()` - Detaches dispatcher from client
 
+## Options
+----------------
+| Option | Default | Description |
+|---|---|---|
+| `qos` | `0` | Customize subscription qos |
 
 ## Install
 ````
