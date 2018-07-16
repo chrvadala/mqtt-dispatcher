@@ -14,7 +14,7 @@ const defaultOptions = {
 class MqttDispatcher {
   constructor (mqtt, options = {}) {
     this.mqtt = mqtt
-    this.options = {...defaultOptions, ...options}
+    this.options = Object.assign({}, defaultOptions, options)
     this.matcher = new Qlobber(mqttMatcher)
     this.destroyed = false
     this.subscribedTopics = {}
