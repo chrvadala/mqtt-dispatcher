@@ -11,10 +11,7 @@ class ClientWrapper {
         resolve(granted)
       }
 
-      if (options)
-        this.mqtt.subscribe(topics, options, cb)
-      else
-        this.mqtt.subscribe(topics, cb)
+      if (options) { this.mqtt.subscribe(topics, options, cb) } else { this.mqtt.subscribe(topics, cb) }
     })
   }
 

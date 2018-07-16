@@ -1,9 +1,9 @@
+/* global it, expect, jest */
 const ClientWrapper = require('./ClientWrapper')
 
-test('should wrap mqtt.js client', function () {
+it('should wrap mqtt.js client', function () {
   const client = {
     subscribe: jest.fn().mockImplementation((topics, optionsOrCb, cb) => {
-
       let qos, realCb
       if (typeof optionsOrCb === 'function') {
         qos = 0
@@ -21,7 +21,7 @@ test('should wrap mqtt.js client', function () {
       cb(undefined)
     }),
 
-    on: jest.fn(),
+    on: jest.fn()
   }
 
   const wrapper = new ClientWrapper(client)
