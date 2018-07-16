@@ -1,5 +1,5 @@
 const mqtt = require('mqtt')
-const MqttDispatcher = require('./MqttDispatcher')
+const MqttDispatcher = require('./src/MqttDispatcher')
 
 const client = mqtt.connect('mqtt://broker.mqttdashboard.com:8000')
 const router = new MqttDispatcher(client)

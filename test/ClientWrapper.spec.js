@@ -1,5 +1,5 @@
 /* global it, expect, jest */
-const ClientWrapper = require('./ClientWrapper')
+const ClientWrapper = require('../src/ClientWrapper')
 
 it('should wrap mqtt.js client', function () {
   const client = {

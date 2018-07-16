@@ -1,5 +1,5 @@
 /* global it, expect, jest */
-const MqttDispatcher = require('./MqttDispatcher')
+const MqttDispatcher = require('../src/MqttDispatcher')
 
 const noop = jest.fn()
 

@@ -2,7 +2,7 @@
   "name": "mqtt-dispatcher",
   "description": "Node.js message dispatcher for MQTT",
   "version": "0.0.7",
-  "main": "./MqttDispatcher.js",
+  "main": "src/MqttDispatcher.js",
   "repository": "https://github.com/chrvadala/mqtt-dispatcher.git",
   "author": "chrvadala",
   "license": "MIT",
