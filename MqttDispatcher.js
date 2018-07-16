@@ -8,7 +8,7 @@ const mqttMatcher = {
 
 const defaultOptions = {
   qos: 0,
-  handleSubscriptions: true,
+  handleSubscriptions: true
 }
 
 class MqttDispatcher {
