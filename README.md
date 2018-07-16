@@ -1,12 +1,12 @@
 # mqtt-dispatcher 
 Node.js message dispatcher for MQTT
 
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard.js-brightgreen.svg)](https://standardjs.com)
 [![Build Status](https://travis-ci.org/chrvadala/mqtt-dispatcher.svg?branch=master)](https://travis-ci.org/chrvadala/mqtt-dispatcher)
 [![Coverage Status](https://coveralls.io/repos/github/chrvadala/mqtt-dispatcher/badge.svg?branch=master)](https://coveralls.io/github/chrvadala/mqtt-dispatcher?branch=master)
 [![NPM Version](https://img.shields.io/npm/v/mqtt-dispatcher.svg)](https://www.npmjs.com/package/mqtt-dispatcher)
 [![Dependencies Status](https://david-dm.org/chrvadala/mqtt-dispatcher/status.svg)](https://david-dm.org/chrvadala/mqtt-dispatcher)
-[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-[![Beerpay](https://beerpay.io/chrvadala/transformation-matrix/badge.svg?style=beer)](https://beerpay.io/chrvadala/mqtt-dispatcher)
+[![Donate](https://img.shields.io/badge/donate-PayPal-green.svg)](https://www.paypal.me/chrvadala/25)
 
 
 ## Why this library?
