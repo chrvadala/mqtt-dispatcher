@@ -19,8 +19,8 @@ Under the hood it uses the library [qlobber](https://github.com/davedoesdev/qlob
 
 ## Api
 - `new MqttDispatcher(mqtt, options)` - Connects dispatcher with listener
-- `subscribe(topicPattern, fn )` - Adds listener
-- `unsubscribe(topicPattern, [fn])` - Removes listener
+- `addRule(topicPattern, fn )` - Adds listener
+- `removeRule(topicPattern, [fn])` - Removes listener
 - `destroy()` - Detaches dispatcher from client
 
 ## Options
@@ -57,18 +57,18 @@ let func2 = (topic, message) => {
 }
 
 //attach handlers to topics
-router.subscribe('hello/mqtt', func1)
-router.subscribe('hello/+', func2)
+router.addRule('hello/mqtt', func1)
+router.addRule('hello/+', func2)
 
 //remove handlers
 setTimeout(() => {
     console.log('timeout 1')
-    router.unsubscribe('hello/mqtt', func1)
+    router.removeRule('hello/mqtt', func1)
 }, 10 * 1000)
 
 setTimeout(() => {
     console.log('timeout 2')
-    router.unsubscribe('hello/+', func2)
+    router.removeRule('hello/+', func2)
 }, 20 * 1000)
 
 ```

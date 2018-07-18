@@ -30,6 +30,10 @@ class ClientWrapper {
   on (eventName, listener) {
     return this.mqtt.on(eventName, listener)
   }
+
+  removeListener (eventName, listener) {
+    return this.mqtt.removeListener(eventName, listener)
+  }
 }
 
 module.exports = ClientWrapper

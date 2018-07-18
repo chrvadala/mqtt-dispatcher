@@ -1,4 +1,5 @@
 const {Qlobber} = require('qlobber')
+const ClientWrapper = require('./ClientWrapper')
 
 const mqttMatcher = {
   separator: '/',
@@ -11,13 +12,17 @@ const defaultOptions = {
   handleSubscriptions: true
 }
 
+const compareStr = (str1, str2) => str1.localeCompare(str2) === 0
+const isFunction = fn => typeof fn === 'function'
+
 class MqttDispatcher {
   constructor (mqtt, options = {}) {
-    this.mqtt = mqtt
     this.options = Object.assign({}, defaultOptions, options)
+    this.mqtt = new ClientWrapper(mqtt)
     this.matcher = new Qlobber(mqttMatcher)
     this.destroyed = false
-    this.subscribedTopics = {}
+    this.rules = []
+
     this._handleIncomingMessage = this._handleIncomingMessage.bind(this)
     mqtt.on('message', this._handleIncomingMessage)
   }
@@ -26,85 +31,110 @@ class MqttDispatcher {
    * Subscribe to a topic with a function
    * @param topicPattern
    * @param fn
-   * @returns {{performedSubscription: boolean}}
+   * @param options
+   * @returns {{topicPattern: *, subscriptions: *[]}}
    */
-  subscribe (topicPattern, fn) {
-    const {matcher, mqtt, options: {qos, handleSubscriptions}, subscribedTopics} = this
-    this._ensureLive()
-    let performedSubscription = false
+  async addRule (topicPattern, fn, options = {}) {
+    const {rules, matcher, mqtt, options: {qos, handleSubscriptions}} = this
 
-    if (!subscribedTopics[topicPattern]) {
-      if (handleSubscriptions) {
-        mqtt.subscribe(topicPattern, {qos})
-        performedSubscription = true
-      }
-      subscribedTopics[topicPattern] = new Set() // initialize
+    if (this.destroyed) throw new Error('MqttDispatcher was destroyed')
+
+    const rule = {
+      topicPattern,
+      fn,
+      subscription: options.subscription || topicPattern
     }
 
-    if (subscribedTopics[topicPattern].has(fn)) {
-      throw new Error('Function already registered on same topic pattern')
+    if (rules.some(i => compareStr(i.topicPattern, rule.topicPattern) && i.fn === rule.fn)) {
+      throw new Error('Function already registered with same topic pattern')
+    }
+
+    let subscribed = []
+    let needsSubscription = handleSubscriptions && !rules.some(_r => compareStr(_r.subscription, rule.subscription))
+    if (needsSubscription) {
+      subscribed = await mqtt.subscribe([rule.subscription], {qos})
     }
 
     matcher.add(topicPattern, fn)
-    subscribedTopics[topicPattern].add(fn)
-    return {performedSubscription, topicPattern}
+    rules.push(rule)
+
+    return {topicPattern, subscribed}
   }
 
   /**
    * Unsubscribe to a topic (if a function is provided removes just that reference)
    * @param topicPattern
    * @param fn
-   * @returns {{performedUnsubscription: boolean}}
+   * @returns {{topicPattern: *, subscriptions: *}}
    */
-  unsubscribe (topicPattern, fn = undefined) {
-    const {matcher, mqtt, options: {handleSubscriptions}, subscribedTopics} = this
-    this._ensureLive()
-    let performedUnsubscription = false
+  async removeRule (topicPattern, fn = undefined) {
+    const {rules, matcher, mqtt, options: {handleSubscriptions}} = this
 
-    if (!subscribedTopics.hasOwnProperty(topicPattern)) throw new Error('Extraneous topic provided')
+    if (this.destroyed) throw new Error('MqttDispatcher was destroyed')
 
-    if (fn) {
-      if (!subscribedTopics[topicPattern].has(fn)) throw new Error('Extraneous function provided')
-      matcher.remove(topicPattern, fn)
-      subscribedTopics[topicPattern].delete(fn)
-    } else {
-      matcher.remove(topicPattern)
-      subscribedTopics[topicPattern].clear()
-    }
+    let rulesToDestroy = []
+    let rulesToKeep = {}
 
-    if (subscribedTopics[topicPattern].size === 0) {
-      if (handleSubscriptions) {
-        mqtt.unsubscribe(topicPattern)
-        performedUnsubscription = true
+    rules.forEach((_r, ruleIndex) => {
+      let toDestroy = compareStr(_r.topicPattern, topicPattern) && (!isFunction(fn) || _r.fn === fn)
+      if (toDestroy) { rulesToDestroy.push({..._r, ruleIndex}) } else { rulesToKeep[_r.subscription] = true }
+    })
+
+    if (rulesToDestroy.length === 0) throw new Error('Extraneous topic or fn provided')
+
+    let subscriptionsToDestroy = {}
+    let unsubscribed = []
+    // I may have subscriptions required by others rules
+    if (handleSubscriptions) {
+      rulesToDestroy
+        .filter(r1 => !rulesToKeep.hasOwnProperty(r1.subscription))
+        .forEach(r => { subscriptionsToDestroy[r.subscription] = true })
+      unsubscribed = Object.keys(subscriptionsToDestroy)
+
+      if (unsubscribed.length > 0) {
+        await mqtt.unsubscribe(unsubscribed)
       }
-      delete subscribedTopics[topicPattern]
     }
-    return {performedUnsubscription, topicPattern}
+
+    rulesToDestroy.forEach(r => {
+      matcher.remove(r.topicPattern, r.fn)
+      delete this.rules[r.ruleIndex]
+    })
+
+    this.rules = this.rules.filter(Boolean)
+
+    return {topicPattern, unsubscribed}
   }
 
   /**
    * Detach dispatcher from client
    */
-  destroy () {
-    const {matcher, mqtt, options: {handleSubscriptions}, subscribedTopics} = this
-    this._ensureLive()
-    if (handleSubscriptions) {
-      Object.keys(subscribedTopics).forEach(topic => mqtt.unsubscribe(topic))
-    }
-    matcher.clear()
-    this.subscribedTopics = {}
-    mqtt.removeListener('message', this._handleIncomingMessage)
+  async destroy () {
+    const {rules, matcher, mqtt, options: {handleSubscriptions}} = this
+
+    if (this.destroyed) throw new Error('MqttDispatcher was destroyed')
     this.destroyed = true
+
+    mqtt.removeListener('message', this._handleIncomingMessage)
+
+    let subscriptionsToDestroy = {}
+    let unsubscribed = []
+    if (handleSubscriptions) {
+      rules.forEach(_r => { subscriptionsToDestroy[_r.subscription] = true })
+      unsubscribed = Object.keys(subscriptionsToDestroy)
+      await mqtt.unsubscribe(unsubscribed)
+    }
+
+    matcher.clear()
+    this.rules = []
+
+    return {unsubscribed}
   }
 
   _handleIncomingMessage (topic, message, packet) {
     const {matcher} = this
     const fns = matcher.match(topic)
     fns.forEach(fn => fn(topic, message, packet))
-  }
-
-  _ensureLive () {
-    if (this.destroyed) throw new Error('MqttDispatcher was destroyed')
   }
 }
 
