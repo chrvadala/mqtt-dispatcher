@@ -19,9 +19,9 @@ Under the hood it uses the library [qlobber](https://github.com/davedoesdev/qlob
 
 ## Api
 - `new MqttDispatcher(mqtt, options)` - Connects dispatcher with listener
-- `addRule(topicPattern, fn )` - Adds listener
-- `removeRule(topicPattern, [fn])` - Removes listener
-- `destroy()` - Detaches dispatcher from client
+- `await addRule(topicPattern, fn )` - Adds listener
+- `await removeRule(topicPattern, [fn])` - Removes listener
+- `await destroy()` - Detaches dispatcher from client
 
 ## Options
 
