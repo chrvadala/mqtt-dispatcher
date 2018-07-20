@@ -32,6 +32,17 @@ const getMqttFakeClient = () => ({
   }
 })
 
+const fromCB = handler => {
+  return new Promise((resolve, reject) => {
+    const cb = (err, data) => {
+      if (err) return reject(err)
+      resolve(data)
+    }
+    handler(cb)
+  })
+}
+
 module.exports = {
-  getMqttFakeClient
+  getMqttFakeClient,
+  fromCB
 }

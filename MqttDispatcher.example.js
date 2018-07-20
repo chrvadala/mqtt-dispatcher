@@ -1,27 +1,38 @@
 const mqtt = require('mqtt')
-const MqttDispatcher = require('./src/MqttDispatcher')
+const MqttDispatcher = require('.')
 
-const client = mqtt.connect('mqtt://broker.mqttdashboard.com:8000')
-const router = new MqttDispatcher(client)
+const client = mqtt.connect('mqtt://broker.hivemq.com:1883')
+const dispatcher = new MqttDispatcher(client)
 
-client.on('connect', () => {
-  console.log('connect')
+client.on('connect', () => console.log('connected'));
+
+(async () => {
+  await dispatcher.addRule('mqtt-dispatcher/command/logout', (topic, message) => {
+    console.log(message.toString())
+  })
+
+  await dispatcher.addRule('mqtt-dispatcher/command/restart', (topic, message) => {
+    console.log(message.toString())
+  })
+
+  await dispatcher.addRule('mqtt-dispatcher/command/shutdown', (topic, message) => {
+    console.log(message.toString())
+  })
+
+  await fromCB(cb => client.publish('mqtt-dispatcher/command/logout', 'logout command', {qos: 1}, cb))
+  await fromCB(cb => client.publish('mqtt-dispatcher/command/restart', 'restart command', {qos: 1}, cb))
+  await fromCB(cb => client.publish('mqtt-dispatcher/command/shutdown', 'shutdown command', {qos: 1}, cb))
+
+  await dispatcher.removeRule('mqtt-dispatcher/command/logout')
+  await dispatcher.removeRule('mqtt-dispatcher/command/restart')
+  await dispatcher.removeRule('mqtt-dispatcher/command/shutdown')
+
+  await fromCB(cb => client.end(cb))
+})()
+
+const fromCB = handler => new Promise((resolve, reject) => {
+  handler((err, data) => {
+    if (err) return reject(err)
+    resolve(data)
+  })
 })
-
-let func1 = (topic, message) => {
-  console.log('func1', topic, message.toString().substr(0, 50))
-}
-let func2 = (topic, message) => {
-  console.log('func2', topic, message.toString().substr(0, 50))
-}
-
-router.subscribe('#', func1)
-router.subscribe('#', func2)
-
-setTimeout(() => {
-  console.log('timeout 1', router.unsubscribe('#', func1))
-}, 10 * 1000)
-
-setTimeout(() => {
-  console.log('timeout 2', router.unsubscribe('#', func2))
-}, 20 * 1000)
