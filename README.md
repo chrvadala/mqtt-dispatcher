@@ -18,18 +18,35 @@ This library provides a dispatch system that connects a **subscribe** operation 
 Under the hood it uses the library [qlobber](https://github.com/davedoesdev/qlobber) to handle the mach task.
 
 ## Api
-- `new MqttDispatcher(mqtt, options)` - Connects dispatcher with listener
-- `await addRule(topicPattern, fn )` - Adds listener
+- `new MqttDispatcher(mqtt, [options])` - Connects dispatcher with listener
+- `await addRule(topicPattern, fn, [options])` - Adds listener
 - `await removeRule(topicPattern, [fn])` - Removes listener
 - `await destroy()` - Detaches dispatcher from client
 
-## Options
+## `new MqttDispatcher(mqtt, [options])`
+This constructor expects an MQTT.js client as first parameter. On construction it connects the dispatcher with the client library. Some options are available :
 
 ----------------
 | Option | Default | Description |
 |---|---|---|
 | `qos` | `0` | Customize subscription qos |
 | `handleSubscriptions` | true |  If `false` the dispatcher won't subscribe the provided MQTT client to topics. This mode is useful to reduce the number of subscriptions, but supposes that the developer properly performs the required operations to obtain the required messages. _Use with caution_. |
+
+
+## `await addRule(topicPattern, fn, [options])` 
+This method is used to register a new callback. It returns a Promise that is resolved when the subscription on the client has been completed or immediately if no subscription is required. Some options are available:
+
+----------------
+| Option | Default | Description |
+|---|---|---|
+| `subscription` | same as provided in `topicPattern` | Use this option to override the subscription for this rule with a new one that is more general and can work across multiple rules *( eg. If you have a rule for `command/shutdown` and `command/reboot` you can  subscribe the client to `command/+` and save subscriptions )* |
+
+
+## `await removeRule(topicPattern, [fn])`
+Removes a specific rule (if the `fn` is provided) or any rules that is attached to a specific `topicPattern`.
+
+## await destroy()
+Detaches the dispatcher from the MQTT client. After this call any method on the dispatcher throws an exception.
 
 ## Install
 ````
@@ -39,7 +56,7 @@ yarn add mqtt-dispatcher
 ## Example
 ```javascript
 const mqtt = require('mqtt')
-const MqttDispatcher = require('.')
+const MqttDispatcher = require('mqtt-dispatcher')
 
 const client = mqtt.connect('mqtt://broker.hivemq.com:1883')
 const dispatcher = new MqttDispatcher(client)
@@ -48,34 +65,29 @@ client.on('connect', () => console.log('connected'));
 
 (async () => {
   await dispatcher.addRule('mqtt-dispatcher/command/logout', (topic, message) => {
-    console.log(message.toString())
+    console.log('RECEIVED MESSAGE', message.toString())
   })
 
   await dispatcher.addRule('mqtt-dispatcher/command/restart', (topic, message) => {
-    console.log(message.toString())
+    console.log('RECEIVED MESSAGE', message.toString())
   })
 
   await dispatcher.addRule('mqtt-dispatcher/command/shutdown', (topic, message) => {
-    console.log(message.toString())
+    console.log('RECEIVED MESSAGE', message.toString())
   })
 
-  await fromCB(cb => client.publish('mqtt-dispatcher/command/logout', 'logout command', {qos: 1}, cb))
-  await fromCB(cb => client.publish('mqtt-dispatcher/command/restart', 'restart command', {qos: 1}, cb))
-  await fromCB(cb => client.publish('mqtt-dispatcher/command/shutdown', 'shutdown command', {qos: 1}, cb))
+  client.publish('mqtt-dispatcher/command/logout', 'logout command')
+  client.publish('mqtt-dispatcher/command/restart', 'restart command')
+  client.publish('mqtt-dispatcher/command/shutdown', 'shutdown command')
+
+  await new Promise(resolve => setTimeout(resolve, 5000))
 
   await dispatcher.removeRule('mqtt-dispatcher/command/logout')
   await dispatcher.removeRule('mqtt-dispatcher/command/restart')
   await dispatcher.removeRule('mqtt-dispatcher/command/shutdown')
 
-  await fromCB(cb => client.end(cb))
+  client.end(() => console.log('end'))
 })()
-
-const fromCB = handler => new Promise((resolve, reject) => {
-  handler((err, data) => {
-    if (err) return reject(err)
-    resolve(data)
-  })
-})
 ```
 
 ## Changelog
