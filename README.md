@@ -30,11 +30,11 @@ This constructor expects an MQTT.js client as first parameter. On construction i
 | Option | Default | Description |
 |---|---|---|
 | `qos` | `0` | Customize subscription qos |
-| `handleSubscriptions` | true |  If `false` the dispatcher won't subscribe the provided MQTT client to topics. This mode is useful to reduce the number of subscriptions, but supposes that the developer properly performs the required operations to obtain the required messages. _Use with caution_. |
+| `handleSubscriptions` | true |  If `false` the dispatcher won't subscribe the provided MQTT client to topics. This mode is useful to reduce the number of subscriptions. Any subscriptions is up to the developer that **must subscribe** the client enough to obtain the required messages. _Use with caution_. |
 
 
 ## `await addRule(topicPattern, fn, [options])` 
-This method is used to register a new callback. It returns a Promise that is resolved when the subscription on the client has been completed or immediately if no subscription is required. Some options are available:
+This method is used to register a new callback. It returns a `Promise` that is fullfilled when the subscription on the client has been completed or immediately if no subscription is required. Some options are available:
 
 ----------------
 | Option | Default | Description |
