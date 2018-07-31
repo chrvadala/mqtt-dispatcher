@@ -12,11 +12,11 @@ const getMqttFakeClient = () => ({
     }
 
     let res = topics.map(t => ({topic: t, qos}))
-    realCb(undefined, res)
+    setTimeout(() => realCb(undefined, res), 0)
   }),
 
   unsubscribe: jest.fn().mockImplementation((topics, cb) => {
-    cb(undefined)
+    setTimeout(() => cb(undefined), 1000)
   }),
 
   on: jest.fn(),

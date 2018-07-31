@@ -319,3 +319,44 @@ it('should avoid to handle subscriptions using an option', async function () {
   expect(client.subscribe).toHaveBeenCalledTimes(0)
   expect(client.unsubscribe).toHaveBeenCalledTimes(0)
 })
+
+describe.only('test concurrency', () => {
+  let client, dispatcher
+
+  beforeAll(() => {
+    client = getMqttFakeClient()
+    dispatcher = new MqttDispatcher(client)
+  })
+
+  it('should addRule', async () => {
+    expect.hasAssertions()
+
+    const [r1, r2] = await Promise.all([
+      dispatcher.addRule('command/shutdown', jest.fn(), {subscription: 'command/+'}),
+      dispatcher.addRule('command/reboot', jest.fn(), {subscription: 'command/+'}),
+    ])
+
+    expect(client.subscribe).toHaveBeenCalledTimes(1)
+    expect(client.subscribe).toHaveBeenCalledWith(['command/+'], {qos: 0}, expect.any(Function))
+    expect([...r1.subscribed, ...r2.subscribed]).toEqual([{topic: 'command/+', qos: 0}])
+  })
+
+  it('should removeRule', async () => {
+    expect.hasAssertions()
+
+    const convertToResolve = err => ({err: err.message})
+
+    const [r1, r2, r3] = await Promise.all([
+      dispatcher.removeRule('command/shutdown'),
+      dispatcher.removeRule('command/reboot').catch(convertToResolve),
+      dispatcher.removeRule('command/reboot').catch(convertToResolve),
+    ])
+
+    expect(client.unsubscribe).toHaveBeenCalledTimes(1)
+    expect([r1, r2, r3]).toEqual(expect.arrayContaining([
+      {topicPattern: 'command/shutdown', unsubscribed: []},
+      {topicPattern: 'command/reboot', unsubscribed: ['command/+']},
+      {err: 'Extraneous topic or fn provided'},
+    ]))
+  })
+})

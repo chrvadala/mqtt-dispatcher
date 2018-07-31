@@ -51,12 +51,13 @@ class MqttDispatcher {
 
     let subscribed = []
     let needsSubscription = handleSubscriptions && !rules.some(_r => compareStr(_r.subscription, rule.subscription))
-    if (needsSubscription) {
-      subscribed = await mqtt.subscribe([rule.subscription], {qos})
-    }
 
     matcher.add(topicPattern, fn)
     rules.push(rule)
+
+    if (needsSubscription) {
+      subscribed = await mqtt.subscribe([rule.subscription], {qos})
+    }
 
     return {topicPattern, subscribed}
   }
@@ -90,10 +91,6 @@ class MqttDispatcher {
         .filter(r1 => !rulesToKeep.hasOwnProperty(r1.subscription))
         .forEach(r => { subscriptionsToDestroy[r.subscription] = true })
       unsubscribed = Object.keys(subscriptionsToDestroy)
-
-      if (unsubscribed.length > 0) {
-        await mqtt.unsubscribe(unsubscribed)
-      }
     }
 
     rulesToDestroy.forEach(r => {
@@ -102,6 +99,10 @@ class MqttDispatcher {
     })
 
     this.rules = this.rules.filter(Boolean)
+
+    if (handleSubscriptions && unsubscribed.length > 0) {
+      await mqtt.unsubscribe(unsubscribed)
+    }
 
     return {topicPattern, unsubscribed}
   }
