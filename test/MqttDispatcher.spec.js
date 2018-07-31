@@ -1,4 +1,4 @@
-/* global it, expect, jest */
+/* global it, expect, jest, describe, beforeAll */
 const {getMqttFakeClient} = require('./_utils')
 const MqttDispatcher = require('../src/MqttDispatcher')
 
@@ -333,7 +333,7 @@ describe.only('test concurrency', () => {
 
     const [r1, r2] = await Promise.all([
       dispatcher.addRule('command/shutdown', jest.fn(), {subscription: 'command/+'}),
-      dispatcher.addRule('command/reboot', jest.fn(), {subscription: 'command/+'}),
+      dispatcher.addRule('command/reboot', jest.fn(), {subscription: 'command/+'})
     ])
 
     expect(client.subscribe).toHaveBeenCalledTimes(1)
@@ -349,14 +349,14 @@ describe.only('test concurrency', () => {
     const [r1, r2, r3] = await Promise.all([
       dispatcher.removeRule('command/shutdown'),
       dispatcher.removeRule('command/reboot').catch(convertToResolve),
-      dispatcher.removeRule('command/reboot').catch(convertToResolve),
+      dispatcher.removeRule('command/reboot').catch(convertToResolve)
     ])
 
     expect(client.unsubscribe).toHaveBeenCalledTimes(1)
     expect([r1, r2, r3]).toEqual(expect.arrayContaining([
       {topicPattern: 'command/shutdown', unsubscribed: []},
       {topicPattern: 'command/reboot', unsubscribed: ['command/+']},
-      {err: 'Extraneous topic or fn provided'},
+      {err: 'Extraneous topic or fn provided'}
     ]))
   })
 })
