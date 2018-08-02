@@ -320,7 +320,7 @@ it('should avoid to handle subscriptions using an option', async function () {
   expect(client.unsubscribe).toHaveBeenCalledTimes(0)
 })
 
-describe.only('test concurrency', () => {
+describe('test concurrency', () => {
   let client, dispatcher
 
   beforeAll(() => {
