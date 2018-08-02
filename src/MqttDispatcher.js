@@ -123,11 +123,14 @@ class MqttDispatcher {
     if (handleSubscriptions) {
       rules.forEach(_r => { subscriptionsToDestroy[_r.subscription] = true })
       unsubscribed = Object.keys(subscriptionsToDestroy)
-      await mqtt.unsubscribe(unsubscribed)
     }
 
     matcher.clear()
     this.rules = []
+
+    if (handleSubscriptions && unsubscribed.length > 0) {
+      await mqtt.unsubscribe(unsubscribed)
+    }
 
     return {unsubscribed}
   }

@@ -360,3 +360,15 @@ describe('test concurrency', () => {
     ]))
   })
 })
+
+it('should skip unsubscribe when destroying an dispatcher', async () => {
+  expect.hasAssertions()
+
+  let client = getMqttFakeClient()
+  let dispatcher = new MqttDispatcher(client)
+
+  await dispatcher.destroy()
+
+  expect(dispatcher.destroyed).toBe(true)
+  expect(client.unsubscribe).toHaveBeenCalledTimes(0)
+})
