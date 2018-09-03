@@ -10,7 +10,7 @@ Node.js message dispatcher for MQTT
 
 
 ## Why this library?
-The implementation for **MQTT** in Javascript is [MQTT.js](https://github.com/mqttjs/MQTT.js). It is able to handle MQTT messages but doesn't have
+The implementation for **MQTT** in Javascript is [MQTT.js](https://github.com/mqttjs/MQTT.js). It is able to handle MQTT messages but it doesn't have
 a built-in message dispatcher. You can subscribe different topics, but all messages are handled by a single event listener `on('message', cb)`.
 
 This library provides a dispatch system that connects a **subscribe** operation with a specific callback. A callback is called only when an incoming message matches the provided pattern.
@@ -43,7 +43,7 @@ This method is used to register a new callback. It returns a `Promise` that is f
 
 
 ## `await removeRule(topicPattern, [fn])`
-Removes a specific rule (if the `fn` is provided) or any rules that is attached to a specific `topicPattern`.
+Removes a specific rule (if the `fn` is provided) or any rules attached to a specific `topicPattern`.
 
 ## await destroy()
 Detaches the dispatcher from the MQTT client. After this call any method on the dispatcher throws an exception.
@@ -92,6 +92,7 @@ client.on('connect', () => console.log('connected'));
 
 ## Changelog
 - **0.x** - Preview version
+- **1.0** - First stable version
 
 ## Contributors
 - [chrvadala](https://github.com/chrvadala) (author)
