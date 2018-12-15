@@ -45,7 +45,7 @@ This method is used to register a new callback. It returns a `Promise` that is f
 ## `await removeRule(topicPattern, [fn])`
 Removes a specific rule (if the `fn` is provided) or any rules attached to a specific `topicPattern`.
 
-## await destroy()
+## `await destroy()`
 Detaches the dispatcher from the MQTT client. After this call any method on the dispatcher throws an exception.
 
 ## Install
