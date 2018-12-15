@@ -13,7 +13,7 @@ it('should wrap mqtt.js client', function () {
         realCb = cb
       }
 
-      let res = topics.map(t => ({topic: t, qos}))
+      let res = topics.map(t => ({ topic: t, qos }))
       realCb(undefined, res)
     }),
 
@@ -29,8 +29,8 @@ it('should wrap mqtt.js client', function () {
   wrapper.on('message', fn1)
   expect(client.on).toBeCalledWith('message', fn1)
 
-  expect(wrapper.subscribe(['test1'], {qos: 1})).resolves.toMatchObject([{topic: 'test1', qos: 1}])
-  expect(wrapper.subscribe(['test2'])).resolves.toMatchObject([{topic: 'test2', qos: 0}])
+  expect(wrapper.subscribe(['test1'], { qos: 1 })).resolves.toMatchObject([{ topic: 'test1', qos: 1 }])
+  expect(wrapper.subscribe(['test2'])).resolves.toMatchObject([{ topic: 'test2', qos: 0 }])
   expect(wrapper.unsubscribe(['test3'])).resolves.toBe(undefined)
 
   expect(() => wrapper.subscribe('test1')).toThrow()

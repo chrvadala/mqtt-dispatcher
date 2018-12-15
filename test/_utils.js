@@ -11,7 +11,7 @@ const getMqttFakeClient = () => ({
       realCb = cb
     }
 
-    let res = topics.map(t => ({topic: t, qos}))
+    let res = topics.map(t => ({ topic: t, qos }))
     setTimeout(() => realCb(undefined, res), 0)
   }),
 
@@ -27,7 +27,7 @@ const getMqttFakeClient = () => ({
     expect(this.on).toHaveBeenCalledTimes(1)
     const handler = this.on.mock.calls[0][1]
     const payload = Buffer.from(message, 'utf8')
-    const packet = {cmd: 'publish', retain: false, qos: 0, dup: false, length: 10, topic, payload}
+    const packet = { cmd: 'publish', retain: false, qos: 0, dup: false, length: 10, topic, payload }
     return handler(topic, message, packet)
   }
 })

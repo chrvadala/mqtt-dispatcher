@@ -1,5 +1,5 @@
 /* global it, expect, jest, describe, beforeAll */
-const {getMqttFakeClient} = require('./_utils')
+const { getMqttFakeClient } = require('./_utils')
 const MqttDispatcher = require('../src/MqttDispatcher')
 
 it('should attach listener and handle sub/unsub operations', async function () {
@@ -11,51 +11,51 @@ it('should attach listener and handle sub/unsub operations', async function () {
 
   const fn1 = jest.fn()
   await expect(dispatcher.addRule('hello/mqtt', fn1)).resolves
-    .toEqual({subscribed: [{topic: 'hello/mqtt', qos: 0}], topicPattern: 'hello/mqtt'})
-  expect(client.subscribe).toHaveBeenCalledWith(['hello/mqtt'], {qos: 0}, expect.any(Function))
+    .toEqual({ subscribed: [{ topic: 'hello/mqtt', qos: 0 }], topicPattern: 'hello/mqtt' })
+  expect(client.subscribe).toHaveBeenCalledWith(['hello/mqtt'], { qos: 0 }, expect.any(Function))
   expect(client.on).toHaveBeenCalledTimes(1)
   expect(dispatcher.rules).toEqual([
-    {topicPattern: 'hello/mqtt', fn: fn1, subscription: 'hello/mqtt'}
+    { topicPattern: 'hello/mqtt', fn: fn1, subscription: 'hello/mqtt' }
   ])
 
   const fn2 = jest.fn()
   await expect(dispatcher.addRule('hello/mqtt', fn2)).resolves
-    .toEqual({subscribed: [], topicPattern: 'hello/mqtt'})
+    .toEqual({ subscribed: [], topicPattern: 'hello/mqtt' })
   expect(client.subscribe).toHaveBeenCalledTimes(1)
   expect(dispatcher.rules).toEqual([
-    {topicPattern: 'hello/mqtt', fn: fn1, subscription: 'hello/mqtt'},
-    {topicPattern: 'hello/mqtt', fn: fn2, subscription: 'hello/mqtt'}
+    { topicPattern: 'hello/mqtt', fn: fn1, subscription: 'hello/mqtt' },
+    { topicPattern: 'hello/mqtt', fn: fn2, subscription: 'hello/mqtt' }
   ])
 
   const fn3 = jest.fn()
   await expect(dispatcher.addRule('hello/world', fn3)).resolves
-    .toEqual({subscribed: [{topic: 'hello/world', qos: 0}], topicPattern: 'hello/world'})
-  expect(client.subscribe).toHaveBeenLastCalledWith(['hello/world'], {qos: 0}, expect.any(Function))
+    .toEqual({ subscribed: [{ topic: 'hello/world', qos: 0 }], topicPattern: 'hello/world' })
+  expect(client.subscribe).toHaveBeenLastCalledWith(['hello/world'], { qos: 0 }, expect.any(Function))
   expect(client.subscribe).toHaveBeenCalledTimes(2)
   expect(dispatcher.rules).toEqual([
-    {topicPattern: 'hello/mqtt', fn: fn1, subscription: 'hello/mqtt'},
-    {topicPattern: 'hello/mqtt', fn: fn2, subscription: 'hello/mqtt'},
-    {topicPattern: 'hello/world', fn: fn3, subscription: 'hello/world'}
+    { topicPattern: 'hello/mqtt', fn: fn1, subscription: 'hello/mqtt' },
+    { topicPattern: 'hello/mqtt', fn: fn2, subscription: 'hello/mqtt' },
+    { topicPattern: 'hello/world', fn: fn3, subscription: 'hello/world' }
   ])
 
   await expect(dispatcher.removeRule('hello/mqtt', fn2)).resolves
-    .toEqual({unsubscribed: [], topicPattern: 'hello/mqtt'})
+    .toEqual({ unsubscribed: [], topicPattern: 'hello/mqtt' })
   expect(client.unsubscribe).toHaveBeenCalledTimes(0)
   expect(dispatcher.rules).toEqual([
-    {topicPattern: 'hello/mqtt', fn: fn1, subscription: 'hello/mqtt'},
-    {topicPattern: 'hello/world', fn: fn3, subscription: 'hello/world'}
+    { topicPattern: 'hello/mqtt', fn: fn1, subscription: 'hello/mqtt' },
+    { topicPattern: 'hello/world', fn: fn3, subscription: 'hello/world' }
   ])
 
   await expect(dispatcher.removeRule('hello/mqtt', fn1)).resolves
-    .toEqual({unsubscribed: ['hello/mqtt'], topicPattern: 'hello/mqtt'})
+    .toEqual({ unsubscribed: ['hello/mqtt'], topicPattern: 'hello/mqtt' })
   expect(client.unsubscribe).toHaveBeenCalledWith(['hello/mqtt'], expect.any(Function))
   expect(client.unsubscribe).toHaveBeenCalledTimes(1)
   expect(dispatcher.rules).toEqual([
-    {topicPattern: 'hello/world', fn: fn3, subscription: 'hello/world'}
+    { topicPattern: 'hello/world', fn: fn3, subscription: 'hello/world' }
   ])
 
   await expect(dispatcher.removeRule('hello/world', fn3)).resolves
-    .toEqual({unsubscribed: ['hello/world'], topicPattern: 'hello/world'})
+    .toEqual({ unsubscribed: ['hello/world'], topicPattern: 'hello/world' })
   expect(client.unsubscribe).toHaveBeenCalledWith(['hello/world'], expect.any(Function))
   expect(client.unsubscribe).toHaveBeenCalledTimes(2)
   expect(dispatcher.rules).toEqual([])
@@ -76,18 +76,18 @@ it('should route messages', async function () {
   let calls3 = 0
   let calls4 = 0
   await expect(dispatcher.addRule('+/mqtt', fn1)).resolves
-    .toEqual({subscribed: [{topic: '+/mqtt', qos: 0}], topicPattern: '+/mqtt'})
+    .toEqual({ subscribed: [{ topic: '+/mqtt', qos: 0 }], topicPattern: '+/mqtt' })
   await expect(dispatcher.addRule('#', fn2)).resolves
-    .toEqual({subscribed: [{topic: '#', qos: 0}], topicPattern: '#'})
+    .toEqual({ subscribed: [{ topic: '#', qos: 0 }], topicPattern: '#' })
   await expect(dispatcher.addRule('abcdef/#', fn3)).resolves
-    .toEqual({subscribed: [{topic: 'abcdef/#', qos: 0}], topicPattern: 'abcdef/#'})
+    .toEqual({ subscribed: [{ topic: 'abcdef/#', qos: 0 }], topicPattern: 'abcdef/#' })
   await expect(dispatcher.addRule('#', fn4)).resolves
-    .toEqual({subscribed: [], topicPattern: '#'})
+    .toEqual({ subscribed: [], topicPattern: '#' })
   expect(dispatcher.rules).toEqual([
-    {topicPattern: '+/mqtt', fn: fn1, subscription: '+/mqtt'},
-    {topicPattern: '#', fn: fn2, subscription: '#'},
-    {topicPattern: 'abcdef/#', fn: fn3, subscription: 'abcdef/#'},
-    {topicPattern: '#', fn: fn4, subscription: '#'}
+    { topicPattern: '+/mqtt', fn: fn1, subscription: '+/mqtt' },
+    { topicPattern: '#', fn: fn2, subscription: '#' },
+    { topicPattern: 'abcdef/#', fn: fn3, subscription: 'abcdef/#' },
+    { topicPattern: '#', fn: fn4, subscription: '#' }
   ])
 
   // match [fn1], [fn2], [fn4]
@@ -111,7 +111,7 @@ it('should route messages', async function () {
 
   // match [fn2(unsub)], [fn3], [fn4]
   await expect(dispatcher.removeRule('#', fn2)).resolves
-    .toEqual({unsubscribed: [], topicPattern: '#'})
+    .toEqual({ unsubscribed: [], topicPattern: '#' })
   client._simulatePublish('abcdef/test/test/test', 'message3')
   expect(fn3).toHaveBeenLastCalledWith('abcdef/test/test/test', 'message3', expect.any(Object))
   expect(fn4).toHaveBeenLastCalledWith('abcdef/test/test/test', 'message3', expect.any(Object))
@@ -120,14 +120,14 @@ it('should route messages', async function () {
   expect(fn3).toHaveBeenCalledTimes(++calls3)
   expect(fn4).toHaveBeenCalledTimes(++calls4)
   expect(dispatcher.rules).toEqual([
-    {topicPattern: '+/mqtt', fn: fn1, subscription: '+/mqtt'},
-    {topicPattern: 'abcdef/#', fn: fn3, subscription: 'abcdef/#'},
-    {topicPattern: '#', fn: fn4, subscription: '#'}
+    { topicPattern: '+/mqtt', fn: fn1, subscription: '+/mqtt' },
+    { topicPattern: 'abcdef/#', fn: fn3, subscription: 'abcdef/#' },
+    { topicPattern: '#', fn: fn4, subscription: '#' }
   ])
 
   // match [fn2(unsub)], [fn3], [fn4(unsub)]
   await expect(dispatcher.removeRule('#', fn4)).resolves
-    .toEqual({unsubscribed: ['#'], topicPattern: '#'})
+    .toEqual({ unsubscribed: ['#'], topicPattern: '#' })
   client._simulatePublish('abcdef/test/test/test', 'message4')
   expect(fn3).toHaveBeenLastCalledWith('abcdef/test/test/test', 'message4', expect.any(Object))
   expect(fn1).toHaveBeenCalledTimes(calls1)
@@ -135,20 +135,20 @@ it('should route messages', async function () {
   expect(fn3).toHaveBeenCalledTimes(++calls3)
   expect(fn4).toHaveBeenCalledTimes(calls4)
   expect(dispatcher.rules).toEqual([
-    {topicPattern: '+/mqtt', fn: fn1, subscription: '+/mqtt'},
-    {topicPattern: 'abcdef/#', fn: fn3, subscription: 'abcdef/#'}
+    { topicPattern: '+/mqtt', fn: fn1, subscription: '+/mqtt' },
+    { topicPattern: 'abcdef/#', fn: fn3, subscription: 'abcdef/#' }
   ])
 
   // match [fn2(unsub)], [fn3(unsub)], [fn4(unsub)]
   await expect(dispatcher.removeRule('abcdef/#', fn3)).resolves
-    .toEqual({unsubscribed: ['abcdef/#'], topicPattern: 'abcdef/#'})
+    .toEqual({ unsubscribed: ['abcdef/#'], topicPattern: 'abcdef/#' })
   client._simulatePublish('abcdef/test/test/test', 'message5')
   expect(fn1).toHaveBeenCalledTimes(calls1)
   expect(fn2).toHaveBeenCalledTimes(calls2)
   expect(fn3).toHaveBeenCalledTimes(calls3)
   expect(fn4).toHaveBeenCalledTimes(calls4)
   expect(dispatcher.rules).toEqual([
-    {topicPattern: '+/mqtt', fn: fn1, subscription: '+/mqtt'}
+    { topicPattern: '+/mqtt', fn: fn1, subscription: '+/mqtt' }
   ])
 
   // match [fn1]
@@ -161,7 +161,7 @@ it('should route messages', async function () {
 
   // match [fn1(unsub)]
   await expect(dispatcher.removeRule('+/mqtt', undefined)).resolves
-    .toEqual({unsubscribed: ['+/mqtt'], topicPattern: '+/mqtt'})
+    .toEqual({ unsubscribed: ['+/mqtt'], topicPattern: '+/mqtt' })
   client._simulatePublish('helloworld/mqtt', 'message6')
   expect(fn1).toHaveBeenCalledTimes(calls1)
   expect(fn2).toHaveBeenCalledTimes(calls2)
@@ -187,7 +187,7 @@ it('should destroy', async function () {
   const handler = client.on.mock.calls[0][1]
 
   await expect(dispatcher.destroy()).resolves
-    .toEqual({unsubscribed: ['+/mqtt', '#', 'abcdef/#']})
+    .toEqual({ unsubscribed: ['+/mqtt', '#', 'abcdef/#'] })
 
   expect(client.subscribe).toHaveBeenCalledTimes(3)
   expect(client.unsubscribe).toHaveBeenCalledTimes(1)
@@ -205,17 +205,17 @@ it('should detach all rules with the provided topicPattern if fn is not provided
 
   const dispatcher = new MqttDispatcher(client)
   await expect(dispatcher.addRule('#', jest.fn())).resolves
-    .toEqual({subscribed: [{topic: '#', qos: 0}], topicPattern: '#'})
+    .toEqual({ subscribed: [{ topic: '#', qos: 0 }], topicPattern: '#' })
   await expect(dispatcher.addRule('#', jest.fn())).resolves
-    .toEqual({subscribed: [], topicPattern: '#'})
+    .toEqual({ subscribed: [], topicPattern: '#' })
   expect(client.subscribe).toHaveBeenCalledTimes(1)
   expect(client.unsubscribe).toHaveBeenCalledTimes(0)
   expect(dispatcher.rules).toEqual([
-    {topicPattern: '#', subscription: '#', fn: expect.any(Function)},
-    {topicPattern: '#', subscription: '#', fn: expect.any(Function)}
+    { topicPattern: '#', subscription: '#', fn: expect.any(Function) },
+    { topicPattern: '#', subscription: '#', fn: expect.any(Function) }
   ])
 
-  await expect(dispatcher.removeRule('#')).resolves.toEqual({unsubscribed: ['#'], topicPattern: '#'})
+  await expect(dispatcher.removeRule('#')).resolves.toEqual({ unsubscribed: ['#'], topicPattern: '#' })
   expect(client.unsubscribe).toHaveBeenCalledTimes(1)
   expect(dispatcher.rules).toEqual([])
 })
@@ -228,18 +228,18 @@ it('should maintain subscription when trying to unsubscribe a fn that wasnt subs
   const fnExtraneous = jest.fn()
 
   const dispatcher = new MqttDispatcher(client)
-  await expect(dispatcher.addRule('#', fn1)).resolves.toEqual({subscribed: [{topic: '#', qos: 0}], topicPattern: '#'})
-  await expect(dispatcher.addRule('#', fn2)).resolves.toEqual({subscribed: [], topicPattern: '#'})
+  await expect(dispatcher.addRule('#', fn1)).resolves.toEqual({ subscribed: [{ topic: '#', qos: 0 }], topicPattern: '#' })
+  await expect(dispatcher.addRule('#', fn2)).resolves.toEqual({ subscribed: [], topicPattern: '#' })
   expect(client.subscribe).toHaveBeenCalledTimes(1)
   expect(client.unsubscribe).toHaveBeenCalledTimes(0)
 
-  await expect(dispatcher.removeRule('#', fn1)).resolves.toEqual({unsubscribed: [], topicPattern: '#'})
+  await expect(dispatcher.removeRule('#', fn1)).resolves.toEqual({ unsubscribed: [], topicPattern: '#' })
   expect(client.unsubscribe).toHaveBeenCalledTimes(0)
 
   await expect(dispatcher.removeRule('#', fnExtraneous)).rejects.toThrow(/extraneous/i)
   expect(client.unsubscribe).toHaveBeenCalledTimes(0)
 
-  await expect(dispatcher.removeRule('#', fn2)).resolves.toEqual({unsubscribed: ['#'], topicPattern: '#'})
+  await expect(dispatcher.removeRule('#', fn2)).resolves.toEqual({ unsubscribed: ['#'], topicPattern: '#' })
   expect(client.unsubscribe).toHaveBeenCalledTimes(1)
 })
 
@@ -249,15 +249,15 @@ it('should reject double registration on same topic', async function () {
   const fn1 = jest.fn()
 
   const dispatcher = new MqttDispatcher(client)
-  await expect(dispatcher.addRule('#', fn1)).resolves.toEqual({subscribed: [{topic: '#', qos: 0}], topicPattern: '#'})
+  await expect(dispatcher.addRule('#', fn1)).resolves.toEqual({ subscribed: [{ topic: '#', qos: 0 }], topicPattern: '#' })
   await expect(dispatcher.addRule('#/foo', fn1)).resolves.toEqual({
-    subscribed: [{topic: '#/foo', qos: 0}],
+    subscribed: [{ topic: '#/foo', qos: 0 }],
     topicPattern: '#/foo'
   })
 
   expect(dispatcher.rules).toEqual([
-    {topicPattern: '#', fn: fn1, subscription: '#'},
-    {topicPattern: '#/foo', fn: fn1, subscription: '#/foo'}
+    { topicPattern: '#', fn: fn1, subscription: '#' },
+    { topicPattern: '#/foo', fn: fn1, subscription: '#/foo' }
   ])
 
   await expect(dispatcher.addRule('#', fn1)).rejects.toThrow(/already registered/i)
@@ -276,26 +276,26 @@ it('should reject unsub on unknown topics', async function () {
 it('should customize qos with options', function () {
   const client = getMqttFakeClient()
 
-  const dispatcher = new MqttDispatcher(client, {qos: 2})
-  expect(dispatcher.options).toMatchObject({qos: 2})
+  const dispatcher = new MqttDispatcher(client, { qos: 2 })
+  expect(dispatcher.options).toMatchObject({ qos: 2 })
   const fn = jest.fn()
   dispatcher.addRule('#', fn)
-  expect(client.subscribe).toHaveBeenCalledWith(['#'], {qos: 2}, expect.any(Function))
+  expect(client.subscribe).toHaveBeenCalledWith(['#'], { qos: 2 }, expect.any(Function))
 })
 
 it('should avoid to handle subscriptions using an option', async function () {
   const client = getMqttFakeClient()
 
-  const dispatcher = new MqttDispatcher(client, {handleSubscriptions: false})
-  expect(dispatcher.options).toMatchObject({handleSubscriptions: false})
+  const dispatcher = new MqttDispatcher(client, { handleSubscriptions: false })
+  expect(dispatcher.options).toMatchObject({ handleSubscriptions: false })
 
   const fn1 = jest.fn()
   const fn2 = jest.fn()
   let calls1 = 0
   let calls2 = 0
 
-  await expect(dispatcher.addRule('root/topic1', fn1)).resolves.toEqual({subscribed: [], topicPattern: 'root/topic1'})
-  await expect(dispatcher.addRule('root/topic2', fn2)).resolves.toEqual({subscribed: [], topicPattern: 'root/topic2'})
+  await expect(dispatcher.addRule('root/topic1', fn1)).resolves.toEqual({ subscribed: [], topicPattern: 'root/topic1' })
+  await expect(dispatcher.addRule('root/topic2', fn2)).resolves.toEqual({ subscribed: [], topicPattern: 'root/topic2' })
 
   expect(client.subscribe).toHaveBeenCalledTimes(0)
 
@@ -313,8 +313,8 @@ it('should avoid to handle subscriptions using an option', async function () {
   expect(fn1).toHaveBeenCalledTimes(calls2)
   expect(fn2).toHaveBeenCalledTimes(calls1)
 
-  await expect(dispatcher.removeRule('root/topic1')).resolves.toEqual({unsubscribed: [], topicPattern: 'root/topic1'})
-  await expect(dispatcher.removeRule('root/topic2')).resolves.toEqual({unsubscribed: [], topicPattern: 'root/topic2'})
+  await expect(dispatcher.removeRule('root/topic1')).resolves.toEqual({ unsubscribed: [], topicPattern: 'root/topic1' })
+  await expect(dispatcher.removeRule('root/topic2')).resolves.toEqual({ unsubscribed: [], topicPattern: 'root/topic2' })
 
   expect(client.subscribe).toHaveBeenCalledTimes(0)
   expect(client.unsubscribe).toHaveBeenCalledTimes(0)
@@ -332,19 +332,19 @@ describe('test concurrency', () => {
     expect.hasAssertions()
 
     const [r1, r2] = await Promise.all([
-      dispatcher.addRule('command/shutdown', jest.fn(), {subscription: 'command/+'}),
-      dispatcher.addRule('command/reboot', jest.fn(), {subscription: 'command/+'})
+      dispatcher.addRule('command/shutdown', jest.fn(), { subscription: 'command/+' }),
+      dispatcher.addRule('command/reboot', jest.fn(), { subscription: 'command/+' })
     ])
 
     expect(client.subscribe).toHaveBeenCalledTimes(1)
-    expect(client.subscribe).toHaveBeenCalledWith(['command/+'], {qos: 0}, expect.any(Function))
-    expect([...r1.subscribed, ...r2.subscribed]).toEqual([{topic: 'command/+', qos: 0}])
+    expect(client.subscribe).toHaveBeenCalledWith(['command/+'], { qos: 0 }, expect.any(Function))
+    expect([...r1.subscribed, ...r2.subscribed]).toEqual([{ topic: 'command/+', qos: 0 }])
   })
 
   it('should removeRule', async () => {
     expect.hasAssertions()
 
-    const convertToResolve = err => ({err: err.message})
+    const convertToResolve = err => ({ err: err.message })
 
     const [r1, r2, r3] = await Promise.all([
       dispatcher.removeRule('command/shutdown'),
@@ -354,9 +354,9 @@ describe('test concurrency', () => {
 
     expect(client.unsubscribe).toHaveBeenCalledTimes(1)
     expect([r1, r2, r3]).toEqual(expect.arrayContaining([
-      {topicPattern: 'command/shutdown', unsubscribed: []},
-      {topicPattern: 'command/reboot', unsubscribed: ['command/+']},
-      {err: 'Extraneous topic or fn provided'}
+      { topicPattern: 'command/shutdown', unsubscribed: [] },
+      { topicPattern: 'command/reboot', unsubscribed: ['command/+'] },
+      { err: 'Extraneous topic or fn provided' }
     ]))
   })
 })

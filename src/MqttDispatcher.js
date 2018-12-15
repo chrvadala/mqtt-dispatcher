@@ -1,4 +1,4 @@
-const {Qlobber} = require('qlobber')
+const { Qlobber } = require('qlobber')
 const ClientWrapper = require('./ClientWrapper')
 
 const mqttMatcher = {
@@ -35,7 +35,7 @@ class MqttDispatcher {
    * @returns {{topicPattern: *, subscriptions: *[]}}
    */
   async addRule (topicPattern, fn, options = {}) {
-    const {rules, matcher, mqtt, options: {qos, handleSubscriptions}} = this
+    const { rules, matcher, mqtt, options: { qos, handleSubscriptions } } = this
 
     if (this.destroyed) throw new Error('MqttDispatcher was destroyed')
 
@@ -56,10 +56,10 @@ class MqttDispatcher {
     rules.push(rule)
 
     if (needsSubscription) {
-      subscribed = await mqtt.subscribe([rule.subscription], {qos})
+      subscribed = await mqtt.subscribe([rule.subscription], { qos })
     }
 
-    return {topicPattern, subscribed}
+    return { topicPattern, subscribed }
   }
 
   /**
@@ -69,7 +69,7 @@ class MqttDispatcher {
    * @returns {{topicPattern: *, subscriptions: *}}
    */
   async removeRule (topicPattern, fn = undefined) {
-    const {rules, matcher, mqtt, options: {handleSubscriptions}} = this
+    const { rules, matcher, mqtt, options: { handleSubscriptions } } = this
 
     if (this.destroyed) throw new Error('MqttDispatcher was destroyed')
 
@@ -78,7 +78,7 @@ class MqttDispatcher {
 
     rules.forEach((_r, ruleIndex) => {
       let toDestroy = compareStr(_r.topicPattern, topicPattern) && (!isFunction(fn) || _r.fn === fn)
-      if (toDestroy) { rulesToDestroy.push({..._r, ruleIndex}) } else { rulesToKeep[_r.subscription] = true }
+      if (toDestroy) { rulesToDestroy.push({ ..._r, ruleIndex }) } else { rulesToKeep[_r.subscription] = true }
     })
 
     if (rulesToDestroy.length === 0) throw new Error('Extraneous topic or fn provided')
@@ -104,14 +104,14 @@ class MqttDispatcher {
       await mqtt.unsubscribe(unsubscribed)
     }
 
-    return {topicPattern, unsubscribed}
+    return { topicPattern, unsubscribed }
   }
 
   /**
    * Detach dispatcher from client
    */
   async destroy () {
-    const {rules, matcher, mqtt, options: {handleSubscriptions}} = this
+    const { rules, matcher, mqtt, options: { handleSubscriptions } } = this
 
     if (this.destroyed) throw new Error('MqttDispatcher was destroyed')
     this.destroyed = true
@@ -132,11 +132,11 @@ class MqttDispatcher {
       await mqtt.unsubscribe(unsubscribed)
     }
 
-    return {unsubscribed}
+    return { unsubscribed }
   }
 
   _handleIncomingMessage (topic, message, packet) {
-    const {matcher} = this
+    const { matcher } = this
     const fns = matcher.match(topic)
     fns.forEach(fn => fn(topic, message, packet))
   }

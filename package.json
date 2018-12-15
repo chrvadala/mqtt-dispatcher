@@ -7,28 +7,30 @@
   "author": "chrvadala",
   "license": "MIT",
   "scripts": {
-    "test:ci": "standard && jest",
+    "test:ci": "standard && jest && yarn coveralls",
     "test": "jest",
     "coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls",
     "standard": "standard",
-    "version": "standard && yarn coveralls"
+    "version": "yarn test && yarn standard"
   },
   "engines": {
-    "node": ">= 6"
+    "node": ">= 8"
   },
   "keywords": [
-    "mqtt"
+    "mqtt",
+    "dispatcher",
+    "messages"
   ],
   "dependencies": {
     "qlobber": "^3.0.2"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.1",
-    "aedes": "^0.35.0",
+    "@types/jest": "^23.3.10",
+    "aedes": "^0.36.0",
     "coveralls": "^3.0.1",
-    "jest": "^23.4.2",
-    "mqtt": "^2.18.3",
-    "portfinder": "^1.0.13",
-    "standard": "^11.0.1"
+    "jest": "^23.6.0",
+    "mqtt": "^2.18.8",
+    "portfinder": "^1.0.20",
+    "standard": "^12.0.1"
   }
 }
