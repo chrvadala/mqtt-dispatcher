@@ -93,6 +93,7 @@ client.on('connect', () => console.log('connected'));
 ## Changelog
 - **0.x** - Preview version
 - **1.0** - First stable version
+- **1.1** - Upgrades libraries
 
 ## Contributors
 - [chrvadala](https://github.com/chrvadala) (author)
