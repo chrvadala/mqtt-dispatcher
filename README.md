@@ -94,6 +94,7 @@ client.on('connect', () => console.log('connected'));
 - **0.x** - Preview version
 - **1.0** - First stable version
 - **1.1** - Upgrades libraries
+- **1.2** - Migrates to codecov
 
 ## Contributors
 - [chrvadala](https://github.com/chrvadala) (author)
