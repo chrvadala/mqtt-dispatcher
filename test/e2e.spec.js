@@ -38,7 +38,7 @@ async function stopBrokerAndClient () {
 /**
  * this is the most standard way to use this library
  */
-describe('standard way', async () => {
+describe('standard way', () => {
   beforeAll(startBrokerAndClient)
   afterAll(stopBrokerAndClient)
 
@@ -88,7 +88,7 @@ describe('standard way', async () => {
 /**
  * in this mode the dispatcher doesn't subscribe the client
  */
-describe('custom subscriptions', async function () {
+describe('custom subscriptions', function () {
   beforeAll(startBrokerAndClient)
   afterAll(stopBrokerAndClient)
 
@@ -141,7 +141,7 @@ describe('custom subscriptions', async function () {
 /**
  * in this mode the dispatcher decouples subscriptions and matched topic
  */
-describe('decoupled subscriptions', async function () {
+describe('decoupled subscriptions', function () {
   beforeAll(startBrokerAndClient)
   afterAll(stopBrokerAndClient)
 
