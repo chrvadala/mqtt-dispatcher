@@ -51,8 +51,8 @@ describe('standard way', () => {
     expect.assertions(2)
 
     dispatcher = new MqttDispatcher(client)
-    let r1 = dispatcher.addRule('command/restart', fn1)
-    let r2 = dispatcher.addRule('command/shutdown', fn2)
+    const r1 = dispatcher.addRule('command/restart', fn1)
+    const r2 = dispatcher.addRule('command/shutdown', fn2)
 
     await expect(r1).resolves.toEqual({ subscribed: [{ qos: 0, topic: 'command/restart' }], topicPattern: 'command/restart' })
     await expect(r2).resolves.toEqual({ subscribed: [{ qos: 0, topic: 'command/shutdown' }], topicPattern: 'command/shutdown' })
@@ -77,11 +77,11 @@ describe('standard way', () => {
   test('remove rules', async () => {
     expect.assertions(2)
 
-    let r1 = dispatcher.removeRule('command/restart')
-    let r2 = dispatcher.removeRule('command/shutdown')
+    const r1 = dispatcher.removeRule('command/restart')
+    const r2 = dispatcher.removeRule('command/shutdown')
 
-    await expect(r1).resolves.toEqual({ 'topicPattern': 'command/restart', 'unsubscribed': ['command/restart'] })
-    await expect(r2).resolves.toEqual({ 'topicPattern': 'command/shutdown', 'unsubscribed': ['command/shutdown'] })
+    await expect(r1).resolves.toEqual({ topicPattern: 'command/restart', unsubscribed: ['command/restart'] })
+    await expect(r2).resolves.toEqual({ topicPattern: 'command/shutdown', unsubscribed: ['command/shutdown'] })
   })
 })
 
@@ -103,8 +103,8 @@ describe('custom subscriptions', function () {
     dispatcher = new MqttDispatcher(client, { handleSubscriptions: false })
     await fromCB(cb => client.subscribe('#', cb)) // <--- if handleSubscriptions: false, then this line is required
 
-    let r1 = dispatcher.addRule('command/restart', fn1)
-    let r2 = dispatcher.addRule('command/shutdown', fn2)
+    const r1 = dispatcher.addRule('command/restart', fn1)
+    const r2 = dispatcher.addRule('command/shutdown', fn2)
 
     await expect(r1).resolves.toEqual({ subscribed: [], topicPattern: 'command/restart' })
     await expect(r2).resolves.toEqual({ subscribed: [], topicPattern: 'command/shutdown' })
@@ -129,12 +129,12 @@ describe('custom subscriptions', function () {
   test('remove rules', async () => {
     expect.assertions(2)
 
-    let r1 = dispatcher.removeRule('command/restart')
-    let r2 = dispatcher.removeRule('command/shutdown')
+    const r1 = dispatcher.removeRule('command/restart')
+    const r2 = dispatcher.removeRule('command/shutdown')
     await fromCB(cb => client.unsubscribe('#', cb)) // <--- if handleSubscriptions: false, then this line is required
 
-    await expect(r1).resolves.toEqual({ 'topicPattern': 'command/restart', 'unsubscribed': [] })
-    await expect(r2).resolves.toEqual({ 'topicPattern': 'command/shutdown', 'unsubscribed': [] })
+    await expect(r1).resolves.toEqual({ topicPattern: 'command/restart', unsubscribed: [] })
+    await expect(r2).resolves.toEqual({ topicPattern: 'command/shutdown', unsubscribed: [] })
   })
 })
 
@@ -154,13 +154,13 @@ describe('decoupled subscriptions', function () {
     expect.assertions(2)
     dispatcher = new MqttDispatcher(client)
 
-    let r1 = dispatcher.addRule(
+    const r1 = dispatcher.addRule(
       'command/restart',
       fn1,
       { subscription: 'command/+' } // <--- reduces subscriptions using same topic in different rules
     )
 
-    let r2 = dispatcher.addRule(
+    const r2 = dispatcher.addRule(
       'command/shutdown',
       fn2,
       { subscription: 'command/+' } // <--- reduces subscriptions using same topic in different rules
@@ -189,10 +189,10 @@ describe('decoupled subscriptions', function () {
   test('remove rules', async () => {
     expect.assertions(2)
 
-    let r1 = dispatcher.removeRule('command/restart')
-    let r2 = dispatcher.removeRule('command/shutdown')
+    const r1 = dispatcher.removeRule('command/restart')
+    const r2 = dispatcher.removeRule('command/shutdown')
 
-    await expect(r1).resolves.toEqual({ 'topicPattern': 'command/restart', 'unsubscribed': [] })
-    await expect(r2).resolves.toEqual({ 'topicPattern': 'command/shutdown', 'unsubscribed': ['command/+'] })
+    await expect(r1).resolves.toEqual({ topicPattern: 'command/restart', unsubscribed: [] })
+    await expect(r2).resolves.toEqual({ topicPattern: 'command/shutdown', unsubscribed: ['command/+'] })
   })
 })

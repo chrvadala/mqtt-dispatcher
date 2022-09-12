@@ -32,7 +32,7 @@ class MqttDispatcher {
    * @param topicPattern
    * @param fn
    * @param options
-   * @returns {{topicPattern: *, subscriptions: *[]}}
+   * @returns {diff}
    */
   async addRule (topicPattern, fn, options = {}) {
     const { rules, matcher, mqtt, options: { qos, handleSubscriptions } } = this
@@ -50,7 +50,7 @@ class MqttDispatcher {
     }
 
     let subscribed = []
-    let needsSubscription = handleSubscriptions && !rules.some(_r => compareStr(_r.subscription, rule.subscription))
+    const needsSubscription = handleSubscriptions && !rules.some(_r => compareStr(_r.subscription, rule.subscription))
 
     matcher.add(topicPattern, fn)
     rules.push(rule)
@@ -66,29 +66,29 @@ class MqttDispatcher {
    * Unsubscribe to a topic (if a function is provided removes just that reference)
    * @param topicPattern
    * @param fn
-   * @returns {{topicPattern: *, subscriptions: *}}
+   * @returns {diff}
    */
   async removeRule (topicPattern, fn = undefined) {
     const { rules, matcher, mqtt, options: { handleSubscriptions } } = this
 
     if (this.destroyed) throw new Error('MqttDispatcher was destroyed')
 
-    let rulesToDestroy = []
-    let rulesToKeep = {}
+    const rulesToDestroy = []
+    const rulesToKeep = {}
 
     rules.forEach((_r, ruleIndex) => {
-      let toDestroy = compareStr(_r.topicPattern, topicPattern) && (!isFunction(fn) || _r.fn === fn)
+      const toDestroy = compareStr(_r.topicPattern, topicPattern) && (!isFunction(fn) || _r.fn === fn)
       if (toDestroy) { rulesToDestroy.push({ ..._r, ruleIndex }) } else { rulesToKeep[_r.subscription] = true }
     })
 
     if (rulesToDestroy.length === 0) throw new Error('Extraneous topic or fn provided')
 
-    let subscriptionsToDestroy = {}
+    const subscriptionsToDestroy = {}
     let unsubscribed = []
     // I may have subscriptions required by others rules
     if (handleSubscriptions) {
       rulesToDestroy
-        .filter(r1 => !rulesToKeep.hasOwnProperty(r1.subscription))
+        .filter(r1 => !(r1.subscription in rulesToKeep))
         .forEach(r => { subscriptionsToDestroy[r.subscription] = true })
       unsubscribed = Object.keys(subscriptionsToDestroy)
     }
@@ -118,7 +118,7 @@ class MqttDispatcher {
 
     mqtt.removeListener('message', this._handleIncomingMessage)
 
-    let subscriptionsToDestroy = {}
+    const subscriptionsToDestroy = {}
     let unsubscribed = []
     if (handleSubscriptions) {
       rules.forEach(_r => { subscriptionsToDestroy[_r.subscription] = true })
@@ -143,3 +143,9 @@ class MqttDispatcher {
 }
 
 module.exports = MqttDispatcher
+
+/**
+ * @typedef diff
+ * @property {Array} topicPattern - list of patterns
+ * @property {Array} subscriptions - list of subscriptions
+ */

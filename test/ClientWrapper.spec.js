@@ -13,7 +13,7 @@ it('should wrap mqtt.js client', function () {
         realCb = cb
       }
 
-      let res = topics.map(t => ({ topic: t, qos }))
+      const res = topics.map(t => ({ topic: t, qos }))
       realCb(undefined, res)
     }),
 
