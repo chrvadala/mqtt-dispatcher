@@ -1,59 +1,29 @@
 # mqtt-dispatcher 
-Node.js message dispatcher for MQTT
+MQTT dispatcher is a library that extends MQTT.js and allows to route incoming messages on a specific handler, according to defined routing rules.
 
-[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard.js-brightgreen.svg)](https://standardjs.com)
-[![Build Status](https://travis-ci.org/chrvadala/mqtt-dispatcher.svg?branch=master)](https://travis-ci.org/chrvadala/mqtt-dispatcher)
-[![Coverage Status](https://coveralls.io/repos/github/chrvadala/mqtt-dispatcher/badge.svg?branch=master)](https://coveralls.io/github/chrvadala/mqtt-dispatcher?branch=master)
-[![NPM Version](https://img.shields.io/npm/v/mqtt-dispatcher.svg)](https://www.npmjs.com/package/mqtt-dispatcher)
-[![Dependencies Status](https://david-dm.org/chrvadala/mqtt-dispatcher/status.svg)](https://david-dm.org/chrvadala/mqtt-dispatcher)
+[![chrvadala](https://img.shields.io/badge/website-chrvadala-orange.svg)](https://chrvadala.github.io)
+[![Test](https://github.com/chrvadala/mqtt-dispatcher/workflows/Test/badge.svg)](https://github.com/chrvadala/mqtt-dispatcher/actions)
+[![Coverage Status](https://coveralls.io/repos/github/chrvadala/mqtt-dispatcher/badge.svg)](https://coveralls.io/github/chrvadala/mqtt-dispatcher)
+[![npm](https://img.shields.io/npm/v/mqtt-dispatcher.svg?maxAge=2592000?style=plastic)](https://www.npmjs.com/package/mqtt-dispatcher)
+[![Downloads](https://img.shields.io/npm/dm/mqtt-dispatcher.svg)](https://www.npmjs.com/package/mqtt-dispatcher)
 [![Donate](https://img.shields.io/badge/donate-PayPal-green.svg)](https://www.paypal.me/chrvadala/25)
 
 
-## Why this library?
+# Why this library?
 The implementation for **MQTT** in Javascript is [MQTT.js](https://github.com/mqttjs/MQTT.js). It is able to handle MQTT messages but it doesn't have
 a built-in message dispatcher. You can subscribe different topics, but all messages are handled by a single event listener `on('message', cb)`.
 
 This library provides a dispatch system that connects a **subscribe** operation with a specific callback. A callback is called only when an incoming message matches the provided pattern.
 
-Under the hood it uses the library [qlobber](https://github.com/davedoesdev/qlobber) to handle the mach task.
+# Documentation
+- [APIs](https://github.com/chrvadala/mqtt-dispatcher/blob/main/docs/api.md)
 
-## Api
-- `new MqttDispatcher(mqtt, [options])` - Connects dispatcher with listener
-- `await addRule(topicPattern, fn, [options])` - Adds listener
-- `await removeRule(topicPattern, [fn])` - Removes listener
-- `await destroy()` - Detaches dispatcher from client
-
-## `new MqttDispatcher(mqtt, [options])`
-This constructor expects an MQTT.js client as first parameter. On construction it connects the dispatcher with the client library. Some options are available :
-
-----------------
-| Option | Default | Description |
-|---|---|---|
-| `qos` | `0` | Customize subscription qos |
-| `handleSubscriptions` | true |  If `false` the dispatcher won't subscribe the provided MQTT client to topics. This mode is useful to reduce the number of subscriptions. Any subscriptions is up to the developer that **must subscribe** the client enough to obtain the required messages. _Use with caution_. |
-
-
-## `await addRule(topicPattern, fn, [options])` 
-This method is used to register a new callback. It returns a `Promise` that is fullfilled when the subscription on the client has been completed or immediately if no subscription is required. Some options are available:
-
-----------------
-| Option | Default | Description |
-|---|---|---|
-| `subscription` | same as provided in `topicPattern` | Use this option to override the subscription for this rule with a new one that is more general and can work across multiple rules *( eg. If you have a rule for `command/shutdown` and `command/reboot` you can  subscribe the client to `command/+` and save subscriptions )* |
-
-
-## `await removeRule(topicPattern, [fn])`
-Removes a specific rule (if the `fn` is provided) or any rules attached to a specific `topicPattern`.
-
-## `await destroy()`
-Detaches the dispatcher from the MQTT client. After this call any method on the dispatcher throws an exception.
-
-## Install
+# Install
 ````
-yarn add mqtt-dispatcher
+npm install mqtt-dispatcher
 ````
 
-## Example
+# Example
 ```javascript
 const mqtt = require('mqtt')
 const MqttDispatcher = require('mqtt-dispatcher')
