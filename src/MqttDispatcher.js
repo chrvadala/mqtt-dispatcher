@@ -15,6 +15,9 @@ const defaultOptions = {
 const compareStr = (str1, str2) => str1.localeCompare(str2) === 0
 const isFunction = fn => typeof fn === 'function'
 
+/**
+ * @class
+ */
 class MqttDispatcher {
   constructor (mqtt, options = {}) {
     this.options = Object.assign({}, defaultOptions, options)

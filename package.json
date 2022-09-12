@@ -26,6 +26,7 @@
     "@types/jest": "^29.0.1",
     "aedes": "^0.47.0",
     "jest": "^29.0.3",
+    "jsdoc-to-markdown": "^7.1.1",
     "mqtt": "^4.3.7",
     "portfinder": "^1.0.32",
     "standard": "^17.0.0"
