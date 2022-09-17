@@ -6,7 +6,7 @@ MQTT dispatcher is a library that extends MQTT.js and allows to route incoming m
 [![Coverage Status](https://coveralls.io/repos/github/chrvadala/mqtt-dispatcher/badge.svg)](https://coveralls.io/github/chrvadala/mqtt-dispatcher)
 [![npm](https://img.shields.io/npm/v/mqtt-dispatcher.svg?maxAge=2592000?style=plastic)](https://www.npmjs.com/package/mqtt-dispatcher)
 [![Downloads](https://img.shields.io/npm/dm/mqtt-dispatcher.svg)](https://www.npmjs.com/package/mqtt-dispatcher)
-[![Donate](https://img.shields.io/badge/donate-PayPal-green.svg)](https://www.paypal.me/chrvadala/25)
+[![Donate](https://img.shields.io/badge/donate-GithubSponsor-green.svg)](https://github.com/sponsors/chrvadala)
 
 
 # Why this library?
