@@ -65,7 +65,7 @@ client.on('connect', () => console.log('connected'));
 - **1.0** - First stable version
 - **1.1** - Upgrades libraries
 - **1.2** - Migrates to codecov
-- **2.0** - Upgrades deps, migrates to npm, [chrvadala/github-actions](https://github.com/chrvadala/github-actions) and coveralls, improves documentation
+- **2.0** - Upgrades deps; migrates to npm, [chrvadala/github-actions](https://github.com/chrvadala/github-actions) and coveralls; improves documentation
 
 ## Contributors
 - [chrvadala](https://github.com/chrvadala) (author)
