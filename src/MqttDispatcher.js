@@ -130,7 +130,7 @@ class MqttDispatcher {
   /**
    * Detaches the dispatcher from the MQTT client. After this call, any method on the dispatcher throws an exception.
    * @async
-   * @return {Promise<{Object}>}
+   * @return {Promise<Object>}
    */
   async destroy () {
     const { rules, matcher, mqtt, options: { handleSubscriptions } } = this

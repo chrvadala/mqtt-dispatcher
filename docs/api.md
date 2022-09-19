@@ -36,7 +36,7 @@ MQTT Dispatcher component
     * [new MqttDispatcher([options])](#new_MqttDispatcher_new)
     * [.addRule(topicPattern, fn, [options])](#MqttDispatcher+addRule) ⇒ [<code>Promise.&lt;InvolvedEntities&gt;</code>](#InvolvedEntities)
     * [.removeRule(topicPattern, [fn])](#MqttDispatcher+removeRule) ⇒ [<code>Promise.&lt;InvolvedEntities&gt;</code>](#InvolvedEntities)
-    * [.destroy()](#MqttDispatcher+destroy) ⇒ <code>Promise.&lt;{Object}&gt;</code>
+    * [.destroy()](#MqttDispatcher+destroy) ⇒ <code>Promise.&lt;Object&gt;</code>
 
 <a name="new_MqttDispatcher_new"></a>
 
@@ -88,7 +88,7 @@ Unsubscribe from a topic
 
 <a name="MqttDispatcher+destroy"></a>
 
-### mqttDispatcher.destroy() ⇒ <code>Promise.&lt;{Object}&gt;</code>
+### mqttDispatcher.destroy() ⇒ <code>Promise.&lt;Object&gt;</code>
 Detaches the dispatcher from the MQTT client. After this call, any method on the dispatcher throws an exception.
 
 **Kind**: instance method of [<code>MqttDispatcher</code>](#MqttDispatcher)  
