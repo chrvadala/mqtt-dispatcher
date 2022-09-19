@@ -36,7 +36,7 @@ MQTT Dispatcher component
     * [new MqttDispatcher([options])](#new_MqttDispatcher_new)
     * [.addRule(topicPattern, fn, [options])](#MqttDispatcher+addRule) ⇒ [<code>Promise.&lt;InvolvedEntities&gt;</code>](#InvolvedEntities)
     * [.removeRule(topicPattern, [fn])](#MqttDispatcher+removeRule) ⇒ [<code>Promise.&lt;InvolvedEntities&gt;</code>](#InvolvedEntities)
-    * [.destroy()](#MqttDispatcher+destroy) ⇒ <code>Object</code>
+    * [.destroy()](#MqttDispatcher+destroy) ⇒ <code>Promise.&lt;{Object}&gt;</code>
 
 <a name="new_MqttDispatcher_new"></a>
 
@@ -72,6 +72,7 @@ This method is used to register a new handler, associated to a topic pattern. It
 | [options] | <code>Object</code> | <code>{}</code> | Subscription options |
 | [options.qos] | <code>number</code> | <code>0</code> | MQTT Quality of Service |
 | [options.handledSubscription] | <code>boolean</code> | <code>true</code> | If false, the dispatcher won't subscribe to the provided MQTT client to topics. This mode is useful to reduce the number of subscriptions. Any mqtt subscription is up to the developer that must subscribe the client enough to obtain the required messages (e.g. '#'). Use with caution. |
+| [options.subscription] | <code>boolean</code> |  | Use this option to override the subscription for this rule with a new one that is more general and can work across multiple rules ( eg. If you have a rule for command/shutdown and command/reboot you can subscribe the client to command/+ and save subscriptions ) |
 
 <a name="MqttDispatcher+removeRule"></a>
 
@@ -87,11 +88,10 @@ Unsubscribe from a topic
 
 <a name="MqttDispatcher+destroy"></a>
 
-### mqttDispatcher.destroy() ⇒ <code>Object</code>
+### mqttDispatcher.destroy() ⇒ <code>Promise.&lt;{Object}&gt;</code>
 Detaches the dispatcher from the MQTT client. After this call, any method on the dispatcher throws an exception.
 
 **Kind**: instance method of [<code>MqttDispatcher</code>](#MqttDispatcher)  
-**Returns**: <code>Object</code> - Promise<>  
 <a name="InvolvedEntities"></a>
 
 ## InvolvedEntities
@@ -100,6 +100,6 @@ Detaches the dispatcher from the MQTT client. After this call, any method on the
 
 | Name | Type | Description |
 | --- | --- | --- |
-| topicPattern | <code>Array</code> | list of patterns involved in the operations |
-| subscriptions | <code>Array</code> | list of subscriptions involved in the operations |
+| topicPattern | <code>Array.&lt;String&gt;</code> | list of patterns involved in the operation |
+| subscriptions | <code>Array.&lt;String&gt;</code> | list of subscriptions involved in the operation |
 

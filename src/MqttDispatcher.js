@@ -130,7 +130,7 @@ class MqttDispatcher {
   /**
    * Detaches the dispatcher from the MQTT client. After this call, any method on the dispatcher throws an exception.
    * @async
-   * @return Promise<{Object}>
+   * @return {Promise<{Object}>}
    */
   async destroy () {
     const { rules, matcher, mqtt, options: { handleSubscriptions } } = this
@@ -168,6 +168,6 @@ module.exports = MqttDispatcher
 
 /**
  * @typedef InvolvedEntities
- * @property {Array} topicPattern - list of patterns involved in the operations
- * @property {Array} subscriptions - list of subscriptions involved in the operations
+ * @property {Array<String>} topicPattern - list of patterns involved in the operation
+ * @property {Array<String>} subscriptions - list of subscriptions involved in the operation
  */
