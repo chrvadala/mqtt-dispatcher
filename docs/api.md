@@ -13,13 +13,14 @@
 
 <dl>
 <dt><a href="#MqttDispatcher">MqttDispatcher</a></dt>
-<dd></dd>
+<dd><p>MQTT Dispatcher component</p>
+</dd>
 </dl>
 
 ## Typedefs
 
 <dl>
-<dt><a href="#diff">diff</a></dt>
+<dt><a href="#InvolvedEntities">InvolvedEntities</a></dt>
 <dd></dd>
 </dl>
 
@@ -27,52 +28,78 @@
 <a name="MqttDispatcher"></a>
 
 ## MqttDispatcher
+MQTT Dispatcher component
+
 **Kind**: global class  
 
 * [MqttDispatcher](#MqttDispatcher)
-    * [.addRule(topicPattern, fn, options)](#MqttDispatcher+addRule) ⇒ [<code>diff</code>](#diff)
-    * [.removeRule(topicPattern, fn)](#MqttDispatcher+removeRule) ⇒ [<code>diff</code>](#diff)
-    * [.destroy()](#MqttDispatcher+destroy)
+    * [new MqttDispatcher([options])](#new_MqttDispatcher_new)
+    * [.addRule(topicPattern, fn, [options])](#MqttDispatcher+addRule) ⇒ [<code>Promise.&lt;InvolvedEntities&gt;</code>](#InvolvedEntities)
+    * [.removeRule(topicPattern, [fn])](#MqttDispatcher+removeRule) ⇒ [<code>Promise.&lt;InvolvedEntities&gt;</code>](#InvolvedEntities)
+    * [.destroy()](#MqttDispatcher+destroy) ⇒ <code>Object</code>
 
+<a name="new_MqttDispatcher_new"></a>
+
+### new MqttDispatcher([options])
+Creates a MqttDispatcher object.
+
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [options] | <code>Object</code> | <code>{}</code> | Subscription options |
+| [options.qos] | <code>number</code> | <code>0</code> | Default QoS. See [addRule](#MqttDispatcher+addRule) options. |
+| [options.handledSubscription] | <code>boolean</code> | <code>true</code> | Default subscription strategy. See [addRule](#MqttDispatcher+addRule) options. |
+
+**Example**  
+```js
+const mqtt = require('mqtt')
+const MqttDispatcher = require('mqtt-dispatcher')
+
+const client = mqtt.connect('mqtt://mqtt.broker:1883')
+const dispatcher = new MqttDispatcher(client)
+```
 <a name="MqttDispatcher+addRule"></a>
 
-### mqttDispatcher.addRule(topicPattern, fn, options) ⇒ [<code>diff</code>](#diff)
-Subscribe to a topic with a function
+### mqttDispatcher.addRule(topicPattern, fn, [options]) ⇒ [<code>Promise.&lt;InvolvedEntities&gt;</code>](#InvolvedEntities)
+This method is used to register a new handler, associated to a topic pattern. It returns a Promise that is fullfilled when the subscription on the client has been completed or immediately if no subscription is required.
 
 **Kind**: instance method of [<code>MqttDispatcher</code>](#MqttDispatcher)  
 
-| Param |
-| --- |
-| topicPattern | 
-| fn | 
-| options | 
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| topicPattern | <code>string</code> |  | Mqtt topic on which the handler has to be attached |
+| fn | <code>function</code> |  | Handler |
+| [options] | <code>Object</code> | <code>{}</code> | Subscription options |
+| [options.qos] | <code>number</code> | <code>0</code> | MQTT Quality of Service |
+| [options.handledSubscription] | <code>boolean</code> | <code>true</code> | If false, the dispatcher won't subscribe to the provided MQTT client to topics. This mode is useful to reduce the number of subscriptions. Any mqtt subscription is up to the developer that must subscribe the client enough to obtain the required messages (e.g. '#'). Use with caution. |
 
 <a name="MqttDispatcher+removeRule"></a>
 
-### mqttDispatcher.removeRule(topicPattern, fn) ⇒ [<code>diff</code>](#diff)
-Unsubscribe to a topic (if a function is provided removes just that reference)
+### mqttDispatcher.removeRule(topicPattern, [fn]) ⇒ [<code>Promise.&lt;InvolvedEntities&gt;</code>](#InvolvedEntities)
+Unsubscribe from a topic
 
 **Kind**: instance method of [<code>MqttDispatcher</code>](#MqttDispatcher)  
 
-| Param |
-| --- |
-| topicPattern | 
-| fn | 
+| Param | Type | Description |
+| --- | --- | --- |
+| topicPattern | <code>string</code> | Mqtt topic on which the handler has to be attached |
+| [fn] | <code>function</code> | Handler (if a function is provided removes the associated handler only) |
 
 <a name="MqttDispatcher+destroy"></a>
 
-### mqttDispatcher.destroy()
-Detach dispatcher from client
+### mqttDispatcher.destroy() ⇒ <code>Object</code>
+Detaches the dispatcher from the MQTT client. After this call, any method on the dispatcher throws an exception.
 
 **Kind**: instance method of [<code>MqttDispatcher</code>](#MqttDispatcher)  
-<a name="diff"></a>
+**Returns**: <code>Object</code> - Promise<>  
+<a name="InvolvedEntities"></a>
 
-## diff
+## InvolvedEntities
 **Kind**: global typedef  
 **Properties**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| topicPattern | <code>Array</code> | list of patterns |
-| subscriptions | <code>Array</code> | list of subscriptions |
+| topicPattern | <code>Array</code> | list of patterns involved in the operations |
+| subscriptions | <code>Array</code> | list of subscriptions involved in the operations |
 

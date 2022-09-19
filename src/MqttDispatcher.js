@@ -16,9 +16,21 @@ const compareStr = (str1, str2) => str1.localeCompare(str2) === 0
 const isFunction = fn => typeof fn === 'function'
 
 /**
- * @class
+ * @classdesc MQTT Dispatcher component
  */
 class MqttDispatcher {
+  /**
+  * Creates a MqttDispatcher object.
+  * @param {Object} [options={}] - Subscription options
+  * @param {number} [options.qos=0] - Default QoS. See {@link MqttDispatcher#addRule} options.
+  * @param {boolean} [options.handledSubscription=true] - Default subscription strategy. See {@link MqttDispatcher#addRule} options.
+  * @example
+  * const mqtt = require('mqtt')
+  * const MqttDispatcher = require('mqtt-dispatcher')
+  *
+  * const client = mqtt.connect('mqtt://mqtt.broker:1883')
+  * const dispatcher = new MqttDispatcher(client)
+  */
   constructor (mqtt, options = {}) {
     this.options = Object.assign({}, defaultOptions, options)
     this.mqtt = new ClientWrapper(mqtt)
@@ -31,11 +43,15 @@ class MqttDispatcher {
   }
 
   /**
-   * Subscribe to a topic with a function
-   * @param topicPattern
-   * @param fn
-   * @param options
-   * @returns {diff}
+   * This method is used to register a new handler, associated to a topic pattern. It returns a Promise that is fullfilled when the subscription on the client has been completed or immediately if no subscription is required.
+   * @async
+   * @param {string} topicPattern - Mqtt topic on which the handler has to be attached
+   * @param {function} fn - Handler
+   * @param {Object} [options={}] - Subscription options
+   * @param {number} [options.qos=0] - MQTT Quality of Service
+   * @param {boolean} [options.handledSubscription=true] - If false, the dispatcher won't subscribe to the provided MQTT client to topics. This mode is useful to reduce the number of subscriptions. Any mqtt subscription is up to the developer that must subscribe the client enough to obtain the required messages (e.g. '#'). Use with caution.
+   * @param {boolean} [options.subscription] - Use this option to override the subscription for this rule with a new one that is more general and can work across multiple rules ( eg. If you have a rule for command/shutdown and command/reboot you can subscribe the client to command/+ and save subscriptions )
+   * @returns {Promise<InvolvedEntities>}
    */
   async addRule (topicPattern, fn, options = {}) {
     const { rules, matcher, mqtt, options: { qos, handleSubscriptions } } = this
@@ -66,10 +82,11 @@ class MqttDispatcher {
   }
 
   /**
-   * Unsubscribe to a topic (if a function is provided removes just that reference)
-   * @param topicPattern
-   * @param fn
-   * @returns {diff}
+   * Unsubscribe from a topic
+   * @async
+   * @param {string} topicPattern - Mqtt topic on which the handler has to be attached
+   * @param {function} [fn=undefined] - Handler (if a function is provided removes the associated handler only)
+   * @returns {Promise<InvolvedEntities>}
    */
   async removeRule (topicPattern, fn = undefined) {
     const { rules, matcher, mqtt, options: { handleSubscriptions } } = this
@@ -111,7 +128,9 @@ class MqttDispatcher {
   }
 
   /**
-   * Detach dispatcher from client
+   * Detaches the dispatcher from the MQTT client. After this call, any method on the dispatcher throws an exception.
+   * @async
+   * @return Promise<{Object}>
    */
   async destroy () {
     const { rules, matcher, mqtt, options: { handleSubscriptions } } = this
@@ -148,7 +167,7 @@ class MqttDispatcher {
 module.exports = MqttDispatcher
 
 /**
- * @typedef diff
- * @property {Array} topicPattern - list of patterns
- * @property {Array} subscriptions - list of subscriptions
+ * @typedef InvolvedEntities
+ * @property {Array} topicPattern - list of patterns involved in the operations
+ * @property {Array} subscriptions - list of subscriptions involved in the operations
  */
