@@ -18,7 +18,10 @@
   "keywords": [
     "mqtt",
     "dispatcher",
-    "messages"
+    "messages",
+    "router",
+    "iot",
+    "mqtt-client"
   ],
   "dependencies": {
     "qlobber": "^7.0.1"
