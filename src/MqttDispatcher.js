@@ -23,7 +23,7 @@ class MqttDispatcher {
   * Creates a MqttDispatcher object.
   * @param {Object} [options={}] - Subscription options
   * @param {number} [options.qos=0] - Default QoS. See {@link MqttDispatcher#addRule} options.
-  * @param {boolean} [options.handledSubscription=true] - Default subscription strategy. See {@link MqttDispatcher#addRule} options.
+  * @param {boolean} [options.handleSubscription=true] - Default subscription strategy. See {@link MqttDispatcher#addRule} options.
   * @example
   * const mqtt = require('mqtt')
   * const MqttDispatcher = require('mqtt-dispatcher')
@@ -49,7 +49,7 @@ class MqttDispatcher {
    * @param {function} fn - Handler
    * @param {Object} [options={}] - Subscription options
    * @param {number} [options.qos=0] - MQTT Quality of Service
-   * @param {boolean} [options.handledSubscription=true] - If false, the dispatcher won't subscribe to the provided MQTT client to topics. This mode is useful to reduce the number of subscriptions. Any mqtt subscription is up to the developer that must subscribe the client enough to obtain the required messages (e.g. '#'). Use with caution.
+   * @param {boolean} [options.handleSubscription=true] - If false, the dispatcher won't subscribe to the provided MQTT client to topics. This mode is useful to reduce the number of subscriptions. Any mqtt subscription is up to the developer that must subscribe the client enough to obtain the required messages (e.g. '#'). Use with caution.
    * @param {boolean} [options.subscription] - Use this option to override the subscription for this rule with a new one that is more general and can work across multiple rules ( eg. If you have a rule for command/shutdown and command/reboot you can subscribe the client to command/+ and save subscriptions )
    * @returns {Promise<InvolvedEntities>}
    */

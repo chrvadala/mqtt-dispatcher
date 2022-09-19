@@ -48,7 +48,7 @@ Creates a MqttDispatcher object.
 | --- | --- | --- | --- |
 | [options] | <code>Object</code> | <code>{}</code> | Subscription options |
 | [options.qos] | <code>number</code> | <code>0</code> | Default QoS. See [addRule](#MqttDispatcher+addRule) options. |
-| [options.handledSubscription] | <code>boolean</code> | <code>true</code> | Default subscription strategy. See [addRule](#MqttDispatcher+addRule) options. |
+| [options.handleSubscription] | <code>boolean</code> | <code>true</code> | Default subscription strategy. See [addRule](#MqttDispatcher+addRule) options. |
 
 **Example**  
 ```js
@@ -71,7 +71,7 @@ This method is used to register a new handler, associated to a topic pattern. It
 | fn | <code>function</code> |  | Handler |
 | [options] | <code>Object</code> | <code>{}</code> | Subscription options |
 | [options.qos] | <code>number</code> | <code>0</code> | MQTT Quality of Service |
-| [options.handledSubscription] | <code>boolean</code> | <code>true</code> | If false, the dispatcher won't subscribe to the provided MQTT client to topics. This mode is useful to reduce the number of subscriptions. Any mqtt subscription is up to the developer that must subscribe the client enough to obtain the required messages (e.g. '#'). Use with caution. |
+| [options.handleSubscription] | <code>boolean</code> | <code>true</code> | If false, the dispatcher won't subscribe to the provided MQTT client to topics. This mode is useful to reduce the number of subscriptions. Any mqtt subscription is up to the developer that must subscribe the client enough to obtain the required messages (e.g. '#'). Use with caution. |
 | [options.subscription] | <code>boolean</code> |  | Use this option to override the subscription for this rule with a new one that is more general and can work across multiple rules ( eg. If you have a rule for command/shutdown and command/reboot you can subscribe the client to command/+ and save subscriptions ) |
 
 <a name="MqttDispatcher+removeRule"></a>
