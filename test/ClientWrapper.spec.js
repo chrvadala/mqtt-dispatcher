@@ -27,7 +27,7 @@ it('should wrap mqtt.js client', function () {
   const wrapper = new ClientWrapper(client)
   const fn1 = jest.fn()
   wrapper.on('message', fn1)
-  expect(client.on).toBeCalledWith('message', fn1)
+  expect(client.on).toHaveBeenCalledWith('message', fn1)
 
   expect(wrapper.subscribe(['test1'], { qos: 1 })).resolves.toMatchObject([{ topic: 'test1', qos: 1 }])
   expect(wrapper.subscribe(['test2'])).resolves.toMatchObject([{ topic: 'test2', qos: 0 }])
