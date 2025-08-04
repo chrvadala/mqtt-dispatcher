@@ -1,27 +1,25 @@
 name: Test
 
 on:
-  push:
-  pull_request:
-  workflow_dispatch:
-  schedule:
-    - cron:  '13 0 1 * *'
+  - push
+  - pull_request
+  - workflow_dispatch
 
 jobs:
   build:
     strategy:
       matrix:
-        os: [ ubuntu-22.04 ]
-        node: [ 16, 18 ]
+        os: [ ubuntu-24.04 ]
+        node: [ 16, 18, 20 ]
     name: Test Nodejs v${{ matrix.node }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: chrvadala/github-actions/nodejs-test-library-action@v1
         with:
           NODE_VERSION: ${{ matrix.node }}
       - name: Publish Coveralls
-        uses: coverallsapp/github-action@v1.1.2
+        uses: coverallsapp/github-action@v2.3.6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           flag-name: run-nodejs-v${{ matrix.node }}-${{ matrix.os }}
@@ -30,10 +28,10 @@ jobs:
   finish:
     name: Finish
     needs: build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Coveralls Finished
-        uses: coverallsapp/github-action@v1.1.2
+        uses: coverallsapp/github-action@v2.3.6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           parallel-finished: true
