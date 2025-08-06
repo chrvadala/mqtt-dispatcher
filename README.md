@@ -2,11 +2,12 @@
 MQTT dispatcher is a library that extends MQTT.js and allows to route incoming messages on a specific handler, according to defined routing rules.
 
 [![chrvadala](https://img.shields.io/badge/website-chrvadala-orange.svg)](https://chrvadala.github.io)
+[![Donate](https://img.shields.io/badge/donate-Paypal-lightgrey.svg)](https://www.paypal.com/paypalme/chrvadala/15)
+
 [![Test](https://github.com/chrvadala/mqtt-dispatcher/workflows/Test/badge.svg)](https://github.com/chrvadala/mqtt-dispatcher/actions)
 [![Coverage Status](https://coveralls.io/repos/github/chrvadala/mqtt-dispatcher/badge.svg)](https://coveralls.io/github/chrvadala/mqtt-dispatcher)
 [![npm](https://img.shields.io/npm/v/mqtt-dispatcher.svg?maxAge=2592000?style=plastic)](https://www.npmjs.com/package/mqtt-dispatcher)
 [![Downloads](https://img.shields.io/npm/dm/mqtt-dispatcher.svg)](https://www.npmjs.com/package/mqtt-dispatcher)
-[![Donate](https://img.shields.io/badge/donate-GithubSponsor-green.svg)](https://github.com/sponsors/chrvadala)
 
 
 # Why this library?
@@ -66,6 +67,7 @@ client.on('connect', () => console.log('connected'));
 - **1.1** - Upgrades libraries
 - **1.2** - Migrates to codecov
 - **2.0** - Upgrades deps; migrates to npm, [chrvadala/github-actions](https://github.com/chrvadala/github-actions) and coveralls; improves documentation
+- **2.1** - Deprecated nodejs 16,18 and adds 22; Upgrades deps and github actions
 
 ## Contributors
 - [chrvadala](https://github.com/chrvadala) (author)
