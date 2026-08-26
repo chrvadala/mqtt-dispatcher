@@ -15,10 +15,10 @@ permissions:
 
 jobs:
   build_and_release:
-    runs-on: ubuntu-24.04
-    if: ${{ github.event.inputs.REPOSITORY_NAME ==  github.repository }}
+    runs-on: ubuntu-26.04
+    if: ${{ github.event.inputs.REPOSITORY_NAME == github.repository }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Release library
         uses: chrvadala/github-actions/nodejs-release-library-action@v1
         with:
