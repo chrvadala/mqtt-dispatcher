@@ -1,5 +1,5 @@
 /* global expect, test, beforeAll, afterAll, jest, describe */
-const aedesLib = require('aedes')
+const { Aedes } = require('aedes')
 const net = require('net')
 const portfinder = require('portfinder')
 const mqtt = require('mqtt')
@@ -9,7 +9,7 @@ const { fromCB } = require('./_utils')
 let aedes, server, port, client
 
 async function startBrokerAndClient () {
-  aedes = aedesLib()
+  aedes = await Aedes.createBroker()
   server = net.createServer(aedes.handle)
 
   // aedes.on('client', client => console.log('client connected', client.id))
