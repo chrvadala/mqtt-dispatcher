@@ -13,5 +13,3 @@ jobs:
       statuses: write
     with:
       node-versions: '[24, 26]'
-    secrets:
-      gh-token: ${{ secrets.GITHUB_TOKEN }}
