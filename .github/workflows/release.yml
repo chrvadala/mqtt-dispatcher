@@ -2,26 +2,22 @@ name: Release
 
 on:
   workflow_dispatch:
-   inputs:
-      NEXT_VERSION:
+    inputs:
+      next-version:
         description: Define next version (major/minor/patch)
         required: true
-      REPOSITORY_NAME:
-        description: Repository full name (e.g. chrvadala/hello )
+      repository-name:
+        description: Repository full name
         required: true
-          
-permissions:
-  contents: write
 
 jobs:
-  build_and_release:
-    runs-on: ubuntu-26.04
-    if: ${{ github.event.inputs.REPOSITORY_NAME == github.repository }}
-    steps:
-      - uses: actions/checkout@v7
-      - name: Release library
-        uses: chrvadala/github-actions/nodejs-release-library-action@v1
-        with:
-          NEXT_VERSION: ${{ github.event.inputs.NEXT_VERSION }}
-          NPM_TOKEN: ${{ secrets.npm_token }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  release:
+    if: ${{ github.event.inputs['repository-name'] == github.repository }}
+    permissions:
+      contents: write
+      packages: write
+    uses: chrvadala/github-actions/.github/workflows/release-nodejs.yml@v2
+    with:
+      next-version: ${{ github.event.inputs.next-version }}
+      command: |
+        echo "Prerelease setup"
