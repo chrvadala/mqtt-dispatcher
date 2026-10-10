@@ -17,5 +17,6 @@ jobs:
     permissions:
       contents: write
       packages: write
+      id-token: write
     with:
       next-version: ${{ github.event.inputs.next-version }}
