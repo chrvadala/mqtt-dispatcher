@@ -68,6 +68,7 @@ client.on('connect', () => console.log('connected'));
 - **1.2** - Migrates to codecov
 - **2.0** - Upgrades deps; migrates to npm, [chrvadala/github-actions](https://github.com/chrvadala/github-actions) and coveralls; improves documentation
 - **2.1** - Deprecated nodejs 16,18 and adds 22; Upgrades deps and github actions
+- **2.2** - Migrates to neostandard; Upgrades deps and gh-actions; 
 
 ## Contributors
 - [chrvadala](https://github.com/chrvadala) (author)
