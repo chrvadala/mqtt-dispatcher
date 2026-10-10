@@ -10,6 +10,7 @@ jobs:
     uses: chrvadala/github-actions/.github/workflows/test-nodejs.yml@v2
     permissions:
       contents: read
-      statuses: write
+      checks: write
+      pull-requests: write
     with:
-      node-versions: '[24, 26]'
+      node-versions: '[24,26]'
