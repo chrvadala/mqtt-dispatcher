@@ -13,11 +13,9 @@ on:
 jobs:
   release:
     if: ${{ github.event.inputs['repository-name'] == github.repository }}
+    uses: chrvadala/github-actions/.github/workflows/release-nodejs.yml@v2
     permissions:
       contents: write
       packages: write
-    uses: chrvadala/github-actions/.github/workflows/release-nodejs.yml@v2
     with:
       next-version: ${{ github.event.inputs.next-version }}
-      command: |
-        echo "Prerelease setup"
